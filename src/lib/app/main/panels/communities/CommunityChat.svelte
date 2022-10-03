@@ -197,6 +197,16 @@
 		});
 	}
 
+	function attachMemberChangeListener(): void {
+		socket.on('memberJoined', ({ profileId }) => {
+			$joinedCommunity.members.push(profileId);
+		});
+
+		socket.on('memberLeft', ({ profileId }) => {
+			$joinedCommunity.members.splice($joinedCommunity.members.indexOf(profileId), 1);
+		});
+	}
+
 	async function keyDownListener(event: KeyboardEvent): Promise<void> {
 		if ($modalVisible) return;
 
@@ -267,6 +277,7 @@
 		attachNewMessageListener();
 		attachDeletedMessageListener();
 		attachCommunityDeletedListener();
+		attachMemberChangeListener();
 
 		// Adjustable margin
 		unsubscribe = targetSendHeight.subscribe((newHeight) => {
@@ -287,6 +298,8 @@
 		socket.off('communityMessageDeleted');
 		socket.off('newCommunityMessage');
 		socket.off('communityDeleted');
+		socket.off('memberJoined');
+		socket.off('memberLeft');
 
 		document.removeEventListener('keydown', keyDownListener);
 	});
