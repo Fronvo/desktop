@@ -62,7 +62,9 @@ function createMainWindow() {
 	else serveURL(mainWindow);
 }
 
-app.once('ready', createMainWindow);
+app.once('ready', () => {
+	createMainWindow();
+});
 
 app.on('activate', () => {
 	if (!mainWindow) {

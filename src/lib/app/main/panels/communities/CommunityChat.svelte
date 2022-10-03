@@ -129,10 +129,20 @@
 	}
 
 	function attachNewMessageListener(): void {
-		socket.on('newCommunityMessage', ({ newMessageData }) => {
+		socket.on('newCommunityMessage', async ({ newMessageData }) => {
 			$targetCommunityMessages = $targetCommunityMessages.concat(newMessageData);
 
 			loadMessages();
+
+			const newMessageAccount = await fetchUser(newMessageData.ownerId);
+
+			if (newMessageData.ownerId != $ourProfileData.profileId) {
+				new Notification(newMessageAccount.username, {
+					body: newMessageData.content,
+					icon: newMessageAccount.avatar || '/favicon.png',
+					timestamp: Number(new Date(newMessageData.creationDate)),
+				});
+			}
 		});
 	}
 
