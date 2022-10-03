@@ -1,6 +1,7 @@
 const windowStateManager = require('electron-window-state');
 const { app, BrowserWindow } = require('electron');
 const serve = require('electron-serve');
+const path = require('path');
 
 try {
 	require('electron-reloader')(module);
@@ -18,6 +19,9 @@ function createWindow() {
 	});
 
 	const mainWindow = new BrowserWindow({
+		icon: path.join(__dirname, '../static/favicon.png'),
+		frame: true,
+		transparent: true,
 		autoHideMenuBar: true,
 		minHeight: 700,
 		minWidth: 700,
