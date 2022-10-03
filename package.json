@@ -1,6 +1,6 @@
 {
 	"name": "fronvo-desktop",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"private": true,
 	"description": "The desktop app of the free-convo chat app.",
 	"main": "src/electron.cjs",
