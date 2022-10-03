@@ -1,58 +1,80 @@
 <script lang="ts">
-	import Counter from '$lib/Counter.svelte';
-	import Logo from '$lib/Logo.svelte';
-	import { browser } from '$app/environment';
+	import Containers from '$lib/index/Containers.svelte';
+	import Footer from '$lib/index/Footer.svelte';
+	import Top from '$lib/index/Top.svelte';
+	import TopNav from '$lib/index/TopNav.svelte';
+	import { showLayout } from 'stores/global';
+	import { indexAnimDuration, indexVisible } from 'stores/index';
+	import { onMount } from 'svelte';
+	import { sineOut } from 'svelte/easing';
+	import { fade, scale } from 'svelte/transition';
+	import { dismissModal } from 'utilities/app/main';
 
-	let desktop: string;
+	let mountReady = false;
 
-	if (window.electron && browser) {
-		window.electron.receive('from-main', (data: any) => {
-			desktop = `Received Message "${data}" from Electron`;
-			console.log(desktop);
-		});
-	}
+	// Disable __layout in index
+	$showLayout = false;
 
-	const agent = window.electron ? 'Electron' : 'Browser';
+	// Default when accessed
+	$indexVisible = true;
+
+	// Remove modals if navigating back
+	dismissModal();
+
+	onMount(() => {
+		mountReady = true;
+	});
 </script>
 
-<main>
-	<Logo />
+<svelte:head>
+	<title>Fronvo | Your Gateway to Free Conversations</title>
+</svelte:head>
 
-	<h1>Hello {agent}!</h1>
+{#if mountReady && $indexVisible}
+	<div
+		class="scrolling-bg"
+		in:scale={{ start: 0.95, duration: 500, opacity: 0.9 }}
+		out:fade={{ duration: indexAnimDuration }}
+	>
+		<TopNav />
 
-	<Counter id="0" {agent} />
+		{#if $indexVisible}
+			<div
+				out:fade={{
+					duration: indexAnimDuration,
+					easing: sineOut,
+				}}
+			>
+				<Top />
 
-	{#if desktop}
-		<br />
-		<br />
-		{desktop}
-	{/if}
-</main>
+				<Containers />
+
+				<Footer />
+			</div>
+		{/if}
+	</div>
+{/if}
 
 <style>
-	:root {
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-			Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-	}
-
-	:global(body) {
-		margin: 0;
-		padding: 0;
-	}
-
-	main {
-		padding: 2em 1em 1em 1em;
-		text-align: center;
-		animation: fade 1s;
-		margin: 0 auto;
-	}
-
-	@keyframes fade {
-		from {
-			opacity: 0;
-		}
-		to {
-			opacity: 1;
-		}
+	.scrolling-bg {
+		top: 0;
+		right: 0;
+		left: 0;
+		bottom: 0;
+		margin: auto;
+		width: 100%;
+		height: fit-content;
+		z-index: 1;
+		background: url(/images/fronvo-landing-scroll-bg.svg) no-repeat center center scroll;
+		-webkit-background-size: cover;
+		-moz-background-size: cover;
+		-o-background-size: cover;
+		background-size: cover;
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
 	}
 </style>

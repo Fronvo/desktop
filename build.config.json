@@ -1,6 +1,6 @@
 {
-	"appId": "com.example.app",
-	"productName": "Svelte Electron",
+	"appId": "com.fronvo",
+	"productName": "Fronvo",
 	"directories": {
 		"output": "dist"
 	},

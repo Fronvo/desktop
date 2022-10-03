@@ -1,14 +1,11 @@
 const windowStateManager = require('electron-window-state');
-const contextMenu = require('electron-context-menu');
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const serve = require('electron-serve');
 const path = require('path');
 
 try {
 	require('electron-reloader')(module);
-} catch (e) {
-	console.error(e);
-}
+} catch (e) {}
 
 const serveURL = serve({ directory: '.' });
 const port = process.env.PORT || 5173;
@@ -17,20 +14,14 @@ let mainWindow;
 
 function createWindow() {
 	let windowState = windowStateManager({
-		defaultWidth: 800,
-		defaultHeight: 600,
+		defaultWidth: 1000,
+		defaultHeight: 1000,
 	});
 
 	const mainWindow = new BrowserWindow({
-		backgroundColor: 'whitesmoke',
-		titleBarStyle: 'hidden',
 		autoHideMenuBar: true,
-		trafficLightPosition: {
-			x: 17,
-			y: 32,
-		},
-		minHeight: 450,
-		minWidth: 500,
+		minHeight: 500,
+		minWidth: 700,
 		webPreferences: {
 			enableRemoteModule: true,
 			contextIsolation: true,
@@ -39,17 +30,12 @@ function createWindow() {
 			devTools: dev,
 			preload: path.join(__dirname, 'preload.cjs'),
 		},
-		x: windowState.x,
-		y: windowState.y,
-		width: windowState.width,
-		height: windowState.height,
 	});
 
 	windowState.manage(mainWindow);
 
 	mainWindow.once('ready-to-show', () => {
 		mainWindow.show();
-		mainWindow.focus();
 	});
 
 	mainWindow.on('close', () => {
@@ -58,17 +44,6 @@ function createWindow() {
 
 	return mainWindow;
 }
-
-contextMenu({
-	showLookUpSelection: false,
-	showSearchWithGoogle: false,
-	showCopyImage: false,
-	prepend: (defaultActions, params, browserWindow) => [
-		{
-			label: 'Make App 💻',
-		},
-	],
-});
 
 function loadVite(port) {
 	mainWindow.loadURL(`http://localhost:${port}`).catch((e) => {
@@ -90,15 +65,13 @@ function createMainWindow() {
 }
 
 app.once('ready', createMainWindow);
+
 app.on('activate', () => {
 	if (!mainWindow) {
 		createMainWindow();
 	}
 });
+
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') app.quit();
-});
-
-ipcMain.on('to-main', (event, count) => {
-	return mainWindow.webContents.send('from-main', `next count is ${count + 1}`);
 });

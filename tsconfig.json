@@ -4,7 +4,6 @@
 		"module": "esnext",
 		"target": "es2020",
 		"moduleResolution": "node",
-		"strict": true,
 		"types": ["vite/client", "node"],
 		"typeRoots": ["node_modules/@types"],
 		"lib": ["ESNext"],
@@ -28,8 +27,16 @@
 		"paths": {
 			"$lib": ["src/lib"],
 			"$lib/*": ["src/lib/*"],
-			"$app/*": [".svelte/dev/runtime/app/*", ".svelte/build/runtime/app/*"]
-		}
+			"$app/*": [".svelte/dev/runtime/app/*", ".svelte/build/runtime/app/*"],
+			"src/*": ["src/*"],
+			"interfaces/*": ["src/interfaces/*"],
+			"stores/*": ["src/stores/*"],
+			"utilities/*": ["src/utilities/*"],
+			"types/*": ["src/types/*"],
+			"variables/*": ["src/variables/*"]
+		},
+		"pretty": true,
+		"allowSyntheticDefaultImports": true
 	},
 	"include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.svelte", "src/electron.js"]
 }

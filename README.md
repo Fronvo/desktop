@@ -1,36 +1,16 @@
-<p align="center">
-  <img src="static/sveltekit-electron.svg" />
-</p>
+<p align='center'><a href='https://fronvo.vercel.app'><img src='https://raw.githubusercontent.com/Fronvo/site/master/.github/assets/logo.svg' alt='Fronvo logo'><a/></p>
+<p align='center'><b>The desktop app of Fronvo</b></p>
+<p align='center'><b>Powered by Electron and SvelteKit</b></p>
 
-# Sveltekit + Electron
+<h2 align='center'>
 
-Minimal [Sveltekit](https://github.com/sveltejs/kit#readme) + [Electron](https://www.electronjs.org/) starter template.
+[![forthebadge](https://forthebadge.com/images/badges/uses-html.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
-<br />
+<img src='https://raw.githubusercontent.com/Fronvo/site/master/.github/assets/demo-run-autohost.svg' alt='Fronvo demo build'>
 
-## Getting Started
+</h2>
 
-Unfortunately you must use `npm` as there are issues that arise when using `pnpm` or `yarn`
+### Get started
 
-|         |                                             |
-| ------- | ------------------------------------------- |
-| Clone   | · `npx degit fractalhq/sveltekit-electron ` |
-| Install | · `npm install`                             |
-| Develop | · `npm run dev`                             |
-| Build   | · `npm run build`                           |
-
-In order to eliminate vulnerabilities caused by electron itself, please run `npm update` and `npm audit fix`. This will apply overrides.
-
-<br />
-
-<p align="center">
-  <img src="screenshot.png" />
-</p>
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Svelte for VSCode](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
-
-## Change Build Targets
-
-In the scripts section of package.json you can update the `build:electron` command and change the flags to set the targets, by default it uses `-mwl` which is Mac, Windows, and Linux
+**[Building](https://github.com/Fronvo/desktop/blob/master/.github/markdown/BUILDING.md)**
