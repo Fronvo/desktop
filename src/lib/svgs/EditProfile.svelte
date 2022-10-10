@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { PanelTypes } from 'types/app/main';
+	import { ModalTypes } from 'types/app/main';
 	import { quadIn } from 'svelte/easing';
 	import { draw } from 'svelte/transition';
-	import { switchPanel } from 'utilities/app/main';
+	import { showModal } from 'utilities/app/main';
 </script>
 
 <svg
@@ -11,25 +11,25 @@
 	viewBox="0 0 48 48"
 	width="48"
 	height="48"
-	on:click={() => switchPanel(PanelTypes.Home)}
+	on:click={() => showModal(ModalTypes.EditProfile)}
 >
 	<defs>
-		<linearGradient id="HOME" gradientUnits="userSpaceOnUse" />
-		<linearGradient id="home" x1="47" y1="9.6" x2="1" y2="38.4" href="#HOME">
+		<linearGradient id="EDIT" gradientUnits="userSpaceOnUse" />
+		<linearGradient id="edit" x1="47" y1="9.6" x2="1" y2="38.4" href="#EDIT">
 			<stop stop-color="#b98bff" />
 			<stop offset="1" stop-color="#710fff" />
 		</linearGradient>
 	</defs>
 	<style>
-		.home {
-			fill: url(#home);
+		.edit {
+			fill: url(#edit);
 			stroke-width: 0;
 		}
 	</style>
 	<path
 		in:draw={{ duration: 1000, easing: quadIn }}
-		class="home"
-		d="M8 42V21.95l-4.2 3.2-1.8-2.4 6-4.55v-5.7h3v3.4L24 6l22 16.8-1.8 2.35-4.2-3.2V42Zm3-3h11.5v-8h3v8H37V19.65l-13-9.9-13 9.9ZM8 10q0-2.3 1.625-3.9T13.5 4.5q1.05 0 1.775-.75Q16 3 16 2h3q0 2.25-1.6 3.875T13.5 7.5q-1 0-1.75.725T11 10Zm3 29h26-26Z"
+		class="edit"
+		d="M9 39h2.2l22.15-22.15-2.2-2.2L9 36.8Zm30.7-24.3-6.4-6.4 2.1-2.1q.85-.85 2.1-.85t2.1.85l2.2 2.2q.85.85.85 2.1t-.85 2.1Zm-2.1 2.1L12.4 42H6v-6.4l25.2-25.2Zm-5.35-1.05-1.1-1.1 2.2 2.2Z"
 	/>
 </svg>
 
@@ -46,7 +46,6 @@
 		-moz-user-select: none;
 		-ms-user-select: none;
 		user-select: none;
-		margin-bottom: 15px;
 	}
 
 	svg:hover {

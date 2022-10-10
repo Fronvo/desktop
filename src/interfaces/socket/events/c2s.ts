@@ -85,6 +85,10 @@ import type {
 	ResetPasswordVerifyParams,
 	ResetPasswordVerifyResult,
 } from 'interfaces/socket/noAccount/resetPasswordVerify';
+import type {
+	ToggleDisableAccountParams,
+	ToggleDisableAccountResult,
+} from 'interfaces/socket/account/toggleDisableAccount';
 
 export interface ClientToServerEvents {
 	register: ({}: RegisterParams, callback?: ({}: RegisterResult) => void) => void;
@@ -158,5 +162,9 @@ export interface ClientToServerEvents {
 	updateChatRequest: (
 		{}: UpdateChatRequestParams,
 		callback?: ({}: UpdateChatRequestResult) => void,
+	) => void;
+	toggleDisableAccount: (
+		{}: ToggleDisableAccountParams,
+		callback?: ({}: ToggleDisableAccountResult) => void,
 	) => void;
 }

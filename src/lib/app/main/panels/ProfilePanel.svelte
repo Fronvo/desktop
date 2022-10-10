@@ -2,9 +2,9 @@
 	import { goto } from '$app/navigation';
 	import ProfileInfo from '$lib/app/main/panels/profile/ProfileInfo.svelte';
 	import ProfilePosts from '$lib/app/main/panels/profile/ProfilePosts.svelte';
+	import { ourProfileData } from 'src/stores/app/communities';
 	import { profileLoadingFinished, targetProfile, userData, userPosts } from 'stores/app/profile';
 	import { onDestroy, onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
 	import { fetchUser } from 'utilities/app/main';
 	import { loadProfilePosts } from 'utilities/app/profile';
 
@@ -25,6 +25,14 @@
 
 				const isAccessible =
 					profileData.isFollower || profileData.isSelf || !profileData.isPrivate;
+
+				if (profileData.isSelf) {
+					$ourProfileData = profileData;
+				} else {
+					if (!$ourProfileData) {
+						$ourProfileData = await fetchUser();
+					}
+				}
 
 				if (isAccessible) {
 					await loadProfilePosts(profileData.profileId);
@@ -50,12 +58,10 @@
 	});
 </script>
 
-<div class="profile-container" in:fade={{ duration: 300, delay: 200 }}>
+<div class="profile-container">
 	<!-- Hot updates in dev -->
 	{#if $userData && $userPosts}
 		<ProfileInfo />
-
-		<hr in:fade={{ duration: 250, delay: 600 }} />
 
 		<ProfilePosts />
 	{/if}
@@ -72,31 +78,17 @@
 		margin-top: 10px;
 	}
 
-	hr {
-		width: 300px;
-		margin-top: 20px;
-	}
-
 	@media screen and (max-width: 720px) {
 		.profile-container {
 			margin-left: 0;
 			margin-right: 0;
 			margin-bottom: 90px;
 		}
-
-		hr {
-			width: 250px;
-			margin-top: 15px;
-		}
 	}
 
 	@media screen and (max-width: 520px) {
 		.profile-container {
 			margin-bottom: 70px;
-		}
-
-		hr {
-			width: 200px;
 		}
 	}
 </style>

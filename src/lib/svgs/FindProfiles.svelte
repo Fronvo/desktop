@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { PanelTypes } from 'types/app/main';
+	import { ModalTypes } from 'types/app/main';
 	import { quadIn } from 'svelte/easing';
 	import { draw } from 'svelte/transition';
-	import { switchPanel } from 'utilities/app/main';
+	import { showModal } from 'utilities/app/main';
 </script>
 
 <svg
@@ -11,25 +11,25 @@
 	viewBox="0 0 48 48"
 	width="48"
 	height="48"
-	on:click={() => switchPanel(PanelTypes.Home)}
+	on:click={() => showModal(ModalTypes.FindProfiles)}
 >
 	<defs>
-		<linearGradient id="HOME" gradientUnits="userSpaceOnUse" />
-		<linearGradient id="home" x1="47" y1="9.6" x2="1" y2="38.4" href="#HOME">
+		<linearGradient id="FIND" gradientUnits="userSpaceOnUse" />
+		<linearGradient id="find" x1="47" y1="9.6" x2="1" y2="38.4" href="#FIND">
 			<stop stop-color="#b98bff" />
 			<stop offset="1" stop-color="#710fff" />
 		</linearGradient>
 	</defs>
 	<style>
-		.home {
-			fill: url(#home);
+		.find {
+			fill: url(#find);
 			stroke-width: 0;
 		}
 	</style>
 	<path
 		in:draw={{ duration: 1000, easing: quadIn }}
-		class="home"
-		d="M8 42V21.95l-4.2 3.2-1.8-2.4 6-4.55v-5.7h3v3.4L24 6l22 16.8-1.8 2.35-4.2-3.2V42Zm3-3h11.5v-8h3v8H37V19.65l-13-9.9-13 9.9ZM8 10q0-2.3 1.625-3.9T13.5 4.5q1.05 0 1.775-.75Q16 3 16 2h3q0 2.25-1.6 3.875T13.5 7.5q-1 0-1.75.725T11 10Zm3 29h26-26Z"
+		class="find"
+		d="M39.8 41.95 26.65 28.8q-1.5 1.3-3.5 2.025-2 .725-4.25.725-5.4 0-9.15-3.75T6 18.75q0-5.3 3.75-9.05 3.75-3.75 9.1-3.75 5.3 0 9.025 3.75 3.725 3.75 3.725 9.05 0 2.15-.7 4.15-.7 2-2.1 3.75L42 39.75Zm-20.95-13.4q4.05 0 6.9-2.875Q28.6 22.8 28.6 18.75t-2.85-6.925Q22.9 8.95 18.85 8.95q-4.1 0-6.975 2.875T9 18.75q0 4.05 2.875 6.925t6.975 2.875Z"
 	/>
 </svg>
 
@@ -46,7 +46,6 @@
 		-moz-user-select: none;
 		-ms-user-select: none;
 		user-select: none;
-		margin-bottom: 15px;
 	}
 
 	svg:hover {
