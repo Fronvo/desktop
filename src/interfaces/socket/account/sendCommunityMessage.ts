@@ -5,8 +5,8 @@
 import type { FronvoError } from 'interfaces/socket/all';
 
 export interface SendCommunityMessageParams {
-	message: string;
-	replyId?: string;
+    message: string;
+    replyId?: string;
 }
 
 export interface SendCommunityMessageResult extends FronvoError {}

@@ -5,7 +5,7 @@
 import type { FronvoError } from 'interfaces/socket/all';
 
 export interface UnfollowProfileParams {
-	profileId: string;
+    profileId: string;
 }
 
 export interface UnfollowProfileResult extends FronvoError {}

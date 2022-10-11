@@ -3,28 +3,28 @@
 // ******************** //
 
 export enum PanelTypes {
-	Home,
-	Profile,
-	Communities,
+    Home,
+    Profile,
+    Communities,
 }
 
 export enum ModalTypes {
-	Settings,
-	FollowInfo,
-	EditProfile,
-	CreatePost,
-	ViewPost,
-	FindProfiles,
-	MaxOnlineTime,
-	CreateCommunity,
-	JoinCommunity,
-	FindCommunities,
-	LeaveCommunity,
-	CommunityMembers,
-	EditCommunity,
-	EditCommunityMember,
+    Settings,
+    FollowInfo,
+    EditProfile,
+    CreatePost,
+    ViewPost,
+    FindProfiles,
+    MaxOnlineTime,
+    CreateCommunity,
+    JoinCommunity,
+    FindCommunities,
+    LeaveCommunity,
+    CommunityMembers,
+    EditCommunity,
+    EditCommunityMember,
 }
 
 export enum DropdownTypes {
-	CommunityInfo,
+    CommunityInfo,
 }

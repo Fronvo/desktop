@@ -5,9 +5,9 @@
 import type { FronvoError } from 'interfaces/socket/all';
 
 export interface RegisterVerifyParams {
-	code: string;
+    code: string;
 }
 
 export interface RegisterVerifyResult extends FronvoError {
-	token: string;
+    token: string;
 }

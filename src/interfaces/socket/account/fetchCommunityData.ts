@@ -6,9 +6,9 @@ import type { Community } from 'interfaces/app/communities';
 import type { FronvoError } from 'interfaces/socket/all';
 
 export interface FetchCommunityDataParams {
-	communityId: string;
+    communityId: string;
 }
 
 export interface FetchCommunityDataResult extends FronvoError {
-	communityData: Community;
+    communityData: Community;
 }

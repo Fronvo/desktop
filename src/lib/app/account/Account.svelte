@@ -1,34 +1,34 @@
 <script lang="ts">
-	import Login from '$lib/app/account/Login.svelte';
-	import Register from '$lib/app/account/Register.svelte';
-	import RegisterVerify from '$lib/app/account/RegisterVerify.svelte';
-	import {
-		accountRegisterTab,
-		accountRegisterVerifyTab,
-		accountResetPasswordFinalTab,
-		accountResetPasswordTab,
-		accountResetPasswordVerifyTab,
-	} from 'stores/app/account';
-	import AccountHeader from './AccountHeader.svelte';
-	import ResetPassword from './ResetPassword.svelte';
-	import ResetPasswordFinal from './ResetPasswordFinal.svelte';
-	import ResetPasswordVerify from './ResetPasswordVerify.svelte';
+    import Login from '$lib/app/account/Login.svelte';
+    import Register from '$lib/app/account/Register.svelte';
+    import RegisterVerify from '$lib/app/account/RegisterVerify.svelte';
+    import {
+        accountRegisterTab,
+        accountRegisterVerifyTab,
+        accountResetPasswordFinalTab,
+        accountResetPasswordTab,
+        accountResetPasswordVerifyTab,
+    } from 'stores/app/account';
+    import AccountHeader from './AccountHeader.svelte';
+    import ResetPassword from './ResetPassword.svelte';
+    import ResetPasswordFinal from './ResetPasswordFinal.svelte';
+    import ResetPasswordVerify from './ResetPasswordVerify.svelte';
 </script>
 
 <AccountHeader />
 
 {#if $accountRegisterVerifyTab}
-	<RegisterVerify />
+    <RegisterVerify />
 {:else if $accountResetPasswordTab}
-	{#if $accountResetPasswordFinalTab}
-		<ResetPasswordFinal />
-	{:else if $accountResetPasswordVerifyTab}
-		<ResetPasswordVerify />
-	{:else}
-		<ResetPassword />
-	{/if}
+    {#if $accountResetPasswordFinalTab}
+        <ResetPasswordFinal />
+    {:else if $accountResetPasswordVerifyTab}
+        <ResetPasswordVerify />
+    {:else}
+        <ResetPassword />
+    {/if}
 {:else if $accountRegisterTab}
-	<Register />
+    <Register />
 {:else}
-	<Login />
+    <Login />
 {/if}

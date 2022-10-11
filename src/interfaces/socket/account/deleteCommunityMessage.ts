@@ -5,7 +5,7 @@
 import type { FronvoError } from 'interfaces/socket/all';
 
 export interface DeleteCommunityMessageParams {
-	messageId: string;
+    messageId: string;
 }
 
 export interface DeleteCommunityMessageResult extends FronvoError {}

@@ -3,5 +3,5 @@
 // ******************** //
 
 export interface CommunityMessageDeletedResult {
-	messageId: string;
+    messageId: string;
 }

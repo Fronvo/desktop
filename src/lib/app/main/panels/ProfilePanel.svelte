@@ -1,94 +1,101 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import ProfileInfo from '$lib/app/main/panels/profile/ProfileInfo.svelte';
-	import ProfilePosts from '$lib/app/main/panels/profile/ProfilePosts.svelte';
-	import { ourProfileData } from 'src/stores/app/communities';
-	import { profileLoadingFinished, targetProfile, userData, userPosts } from 'stores/app/profile';
-	import { onDestroy, onMount } from 'svelte';
-	import { fetchUser } from 'utilities/app/main';
-	import { loadProfilePosts } from 'utilities/app/profile';
+    import { goto } from '$app/navigation';
+    import ProfileInfo from '$lib/app/main/panels/profile/ProfileInfo.svelte';
+    import ProfilePosts from '$lib/app/main/panels/profile/ProfilePosts.svelte';
+    import { ourProfileData } from 'src/stores/app/communities';
+    import {
+        profileLoadingFinished,
+        targetProfile,
+        userData,
+        userPosts,
+    } from 'stores/app/profile';
+    import { onDestroy, onMount } from 'svelte';
+    import { fetchUser } from 'utilities/app/main';
+    import { loadProfilePosts } from 'utilities/app/profile';
 
-	goto(`/profile/${$targetProfile ? $targetProfile : ''}`, {
-		replaceState: true,
-	});
+    goto(`/profile/${$targetProfile ? $targetProfile : ''}`, {
+        replaceState: true,
+    });
 
-	onMount(async () => {
-		fetchUser($targetProfile)
-			.then(async (profileData) => {
-				if (!$targetProfile) {
-					goto(`/profile/${profileData.profileId}`, {
-						replaceState: true,
-					});
-				}
+    onMount(async () => {
+        fetchUser($targetProfile)
+            .then(async (profileData) => {
+                if (!$targetProfile) {
+                    goto(`/profile/${profileData.profileId}`, {
+                        replaceState: true,
+                    });
+                }
 
-				$userData = profileData;
+                $userData = profileData;
 
-				const isAccessible =
-					profileData.isFollower || profileData.isSelf || !profileData.isPrivate;
+                const isAccessible =
+                    profileData.isFollower ||
+                    profileData.isSelf ||
+                    !profileData.isPrivate;
 
-				if (profileData.isSelf) {
-					$ourProfileData = profileData;
-				} else {
-					if (!$ourProfileData) {
-						$ourProfileData = await fetchUser();
-					}
-				}
+                if (profileData.isSelf) {
+                    $ourProfileData = profileData;
+                } else {
+                    if (!$ourProfileData) {
+                        $ourProfileData = await fetchUser();
+                    }
+                }
 
-				if (isAccessible) {
-					await loadProfilePosts(profileData.profileId);
-				} else {
-					$userPosts = [];
-				}
-			})
-			.catch(() => {
-				$targetProfile = undefined;
+                if (isAccessible) {
+                    await loadProfilePosts(profileData.profileId);
+                } else {
+                    $userPosts = [];
+                }
+            })
+            .catch(() => {
+                $targetProfile = undefined;
 
-				goto('/home', {
-					replaceState: true,
-				});
-			});
-	});
+                goto('/home', {
+                    replaceState: true,
+                });
+            });
+    });
 
-	// Reset active profile
-	onDestroy(() => {
-		$targetProfile = undefined;
-		$userData = undefined;
-		$userPosts = undefined;
-		$profileLoadingFinished = false;
-	});
+    // Reset active profile
+    onDestroy(() => {
+        $targetProfile = undefined;
+        $userData = undefined;
+        $userPosts = undefined;
+        $profileLoadingFinished = false;
+    });
 </script>
 
 <div class="profile-container">
-	<!-- Hot updates in dev -->
-	{#if $userData && $userPosts}
-		<ProfileInfo />
+    <!-- Hot updates in dev -->
+    {#if $userData && $userPosts}
+        <ProfileInfo />
 
-		<ProfilePosts />
-	{/if}
+        <ProfilePosts />
+    {/if}
 </div>
 
 <style>
-	.profile-container {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		margin-left: 100px;
-		margin-right: 100px;
-		margin-top: 10px;
-	}
+    .profile-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-left: 100px;
+        margin-right: 100px;
+        margin-top: 10px;
+    }
 
-	@media screen and (max-width: 720px) {
-		.profile-container {
-			margin-left: 0;
-			margin-right: 0;
-			margin-bottom: 90px;
-		}
-	}
+    @media screen and (max-width: 720px) {
+        .profile-container {
+            margin-left: 0;
+            margin-right: 0;
+            margin-bottom: 90px;
+        }
+    }
 
-	@media screen and (max-width: 520px) {
-		.profile-container {
-			margin-bottom: 70px;
-		}
-	}
+    @media screen and (max-width: 520px) {
+        .profile-container {
+            margin-bottom: 70px;
+        }
+    }
 </style>

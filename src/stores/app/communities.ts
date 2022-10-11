@@ -12,7 +12,8 @@ export const sendContent: Writable<string> = writable();
 export const targetSendHeight: Writable<number> = writable();
 export const maxChatAnimDelay: Writable<number> = writable(350);
 export const targetMessageDropdown: Writable<CommunityMessage> = writable();
-export const initialCommunityLoadingFinished: Writable<boolean> = writable(false);
+export const initialCommunityLoadingFinished: Writable<boolean> =
+    writable(false);
 export const chatRequestAccepted: Writable<boolean> = writable(false);
 export const replyingTo: Writable<string> = writable();
 export const replyingToId: Writable<string> = writable();

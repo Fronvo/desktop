@@ -5,6 +5,6 @@
 import type { AccountPost, FronvoAccount } from 'interfaces/app/main';
 
 export interface HomePost {
-	post: AccountPost;
-	profileData: FronvoAccount;
+    post: AccountPost;
+    profileData: FronvoAccount;
 }

@@ -5,10 +5,10 @@
 import type { FronvoError } from 'interfaces/socket/all';
 
 export interface LoginParams {
-	email: string;
-	password: string;
+    email: string;
+    password: string;
 }
 
 export interface LoginResult extends FronvoError {
-	token: string;
+    token: string;
 }

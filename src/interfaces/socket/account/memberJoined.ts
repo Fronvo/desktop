@@ -3,5 +3,5 @@
 // ******************** //
 
 export interface MemberJoinedResult {
-	profileId: string;
+    profileId: string;
 }

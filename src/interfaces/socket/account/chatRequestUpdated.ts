@@ -3,5 +3,5 @@
 // ******************** //
 
 export interface ChatRequestUpdatedResult {
-	accepted: boolean;
+    accepted: boolean;
 }

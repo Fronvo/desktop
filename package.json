@@ -1,80 +1,80 @@
 {
-	"name": "fronvo-desktop",
-	"version": "0.1.2",
-	"private": true,
-	"description": "The desktop app of the free-convo chat app.",
-	"main": "src/electron.cjs",
-	"type": "module",
-	"scripts": {
-		"dev": "cross-env NODE_ENV=dev npm run dev:all",
-		"dev:all": "concurrently -n=svelte,electron -c='#ff3e00',blue \"npm run dev:svelte\" \"npm run dev:electron\"",
-		"dev:svelte": "vite dev",
-		"dev:electron": "electron src/electron.cjs",
-		"build": "cross-env NODE_ENV=production npm run build:svelte && npm run build:electron",
-		"build:svelte": "vite build",
-		"build:electron": "electron-builder -lw --config build.config.json",
-		"check": "svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
-		"format": "prettier --plugin-search-dir=. --write .",
-		"format:check": "prettier --check .",
-		"prepare": "husky install"
-	},
-	"engines": {
-		"npm": ">=7",
-		"yarn": "use npm - https://github.com/FractalHQ/sveltekit-electron/issues/12#issuecomment-1068399385"
-	},
-	"browserslist": [
-		"Chrome 89"
-	],
-	"dependencies": {
-		"@sveltejs/kit": "1.0.0-next.443",
-		"electron-context-menu": "^3.3.0",
-		"electron-reloader": "^1.2.3",
-		"electron-serve": "^1.1.0",
-		"electron-window-state": "^5.0.3",
-		"husky": "^8.0.1",
-		"linkify": "^0.2.1",
-		"linkify-html": "^4.0.2",
-		"saos": "^1.3.1",
-		"socket.io-client": "^4.5.2",
-		"socket.io-msgpack-parser": "^3.0.1",
-		"svelte-check": "^2.9.1",
-		"svelte-checkbox": "^1.0.1",
-		"svelte-css-vars": "^0.0.3",
-		"svelte-loading-spinners": "^0.1.7",
-		"svelte-segmented-input": "^1.6.6",
-		"svelte-switch": "^0.0.5",
-		"svelte-time": "^0.7.1",
-		"svelte-typewriter": "^3.0.4"
-	},
-	"devDependencies": {
-		"@sveltejs/adapter-static": "1.0.0-next.43",
-		"@typescript-eslint/eslint-plugin": "^5.30.6",
-		"@typescript-eslint/parser": "^5.30.6",
-		"concurrently": "^7.2.2",
-		"cross-env": "^7.0.3",
-		"dotenv": "^16.0.1",
-		"electron": "^21.0.1",
-		"electron-builder": "^23.1.0",
-		"electron-connect": "^0.6.3",
-		"electron-packager": "^16.0.0",
-		"electron-updater": "^5.0.5",
-		"eslint": "^8.19.0",
-		"eslint-config-prettier": "^8.3.0",
-		"eslint-plugin-svelte3": "^4.0.0",
-		"npm-run-all": "^4.1.5",
-		"prettier": "^2.7.1",
-		"prettier-plugin-svelte": "^2.7.0",
-		"sass": "^1.53.0",
-		"svelte": "^3.49.0",
-		"svelte-preprocess": "^4.10.7",
-		"tslib": "^2.3.1",
-		"typescript": "^4.7.4",
-		"vite": "^3.1.3"
-	},
-	"overrides": {
-		"electron": {
-			"got": "^12.5.1"
-		}
-	}
+    "name": "fronvo-desktop",
+    "version": "0.1.2",
+    "private": true,
+    "description": "The desktop app of the free-convo chat app.",
+    "main": "src/electron.cjs",
+    "type": "module",
+    "scripts": {
+        "dev": "cross-env NODE_ENV=dev npm run dev:all",
+        "dev:all": "concurrently -n=svelte,electron -c='#ff3e00',blue \"npm run dev:svelte\" \"npm run dev:electron\"",
+        "dev:svelte": "vite dev",
+        "dev:electron": "electron src/electron.cjs",
+        "build": "cross-env NODE_ENV=production npm run build:svelte && npm run build:electron",
+        "build:svelte": "vite build",
+        "build:electron": "electron-builder -lw --config build.config.json",
+        "check": "svelte-check --tsconfig ./tsconfig.json",
+        "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
+        "format": "prettier --plugin-search-dir=. --write .",
+        "format:check": "prettier --check .",
+        "prepare": "husky install"
+    },
+    "engines": {
+        "npm": ">=7",
+        "yarn": "use npm - https://github.com/FractalHQ/sveltekit-electron/issues/12#issuecomment-1068399385"
+    },
+    "browserslist": [
+        "Chrome 89"
+    ],
+    "dependencies": {
+        "@sveltejs/kit": "1.0.0-next.443",
+        "electron-context-menu": "^3.3.0",
+        "electron-reloader": "^1.2.3",
+        "electron-serve": "^1.1.0",
+        "electron-window-state": "^5.0.3",
+        "husky": "^8.0.1",
+        "linkify": "^0.2.1",
+        "linkify-html": "^4.0.2",
+        "saos": "^1.3.1",
+        "socket.io-client": "^4.5.2",
+        "socket.io-msgpack-parser": "^3.0.1",
+        "svelte-check": "^2.9.1",
+        "svelte-checkbox": "^1.0.1",
+        "svelte-css-vars": "^0.0.3",
+        "svelte-loading-spinners": "^0.1.7",
+        "svelte-segmented-input": "^1.6.6",
+        "svelte-switch": "^0.0.5",
+        "svelte-time": "^0.7.1",
+        "svelte-typewriter": "^3.0.4"
+    },
+    "devDependencies": {
+        "@sveltejs/adapter-static": "1.0.0-next.43",
+        "@typescript-eslint/eslint-plugin": "^5.30.6",
+        "@typescript-eslint/parser": "^5.30.6",
+        "concurrently": "^7.2.2",
+        "cross-env": "^7.0.3",
+        "dotenv": "^16.0.1",
+        "electron": "^21.0.1",
+        "electron-builder": "^23.1.0",
+        "electron-connect": "^0.6.3",
+        "electron-packager": "^16.0.0",
+        "electron-updater": "^5.0.5",
+        "eslint": "^8.19.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-svelte3": "^4.0.0",
+        "npm-run-all": "^4.1.5",
+        "prettier": "^2.7.1",
+        "prettier-plugin-svelte": "^2.7.0",
+        "sass": "^1.53.0",
+        "svelte": "^3.49.0",
+        "svelte-preprocess": "^4.10.7",
+        "tslib": "^2.3.1",
+        "typescript": "^4.7.4",
+        "vite": "^3.1.3"
+    },
+    "overrides": {
+        "electron": {
+            "got": "^12.5.1"
+        }
+    }
 }

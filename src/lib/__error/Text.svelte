@@ -1,25 +1,25 @@
 <script lang="ts">
-	import Typewriter from 'svelte-typewriter';
+    import Typewriter from 'svelte-typewriter';
 
-	export let text = 'Typewriter text';
-	export let delay: number = 0;
+    export let text = 'Typewriter text';
+    export let delay: number = 0;
 </script>
 
 <Typewriter {delay} interval={60}>
-	<h1>{text}</h1>
+    <h1>{text}</h1>
 </Typewriter>
 
 <style>
-	h1 {
-		font-size: 2.7rem;
-		margin: 0;
-		transition: 500ms all;
-		color: rgb(255, 109, 255);
-	}
+    h1 {
+        font-size: 2.7rem;
+        margin: 0;
+        transition: 500ms all;
+        color: rgb(255, 109, 255);
+    }
 
-	@media screen and (max-width: 800px) {
-		h1 {
-			font-size: 1.5rem;
-		}
-	}
+    @media screen and (max-width: 800px) {
+        h1 {
+            font-size: 1.5rem;
+        }
+    }
 </style>

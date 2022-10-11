@@ -1,138 +1,147 @@
 <script lang="ts">
-	import Abort from 'src/lib/svgs/Abort.svelte';
-	import {
-		maxChatAnimDelay,
-		replyingTo,
-		replyingToId,
-		sendContent,
-		targetSendHeight,
-	} from 'stores/app/communities';
-	import { onDestroy, onMount } from 'svelte';
-	import type { Unsubscriber } from 'svelte/store';
-	import { fade, fly } from 'svelte/transition';
+    import Abort from 'src/lib/svgs/Abort.svelte';
+    import {
+        maxChatAnimDelay,
+        replyingTo,
+        replyingToId,
+        sendContent,
+        targetSendHeight,
+    } from 'stores/app/communities';
+    import { onDestroy, onMount } from 'svelte';
+    import type { Unsubscriber } from 'svelte/store';
+    import { fade, fly } from 'svelte/transition';
 
-	let unsubscribe: Unsubscriber;
+    let unsubscribe: Unsubscriber;
 
-	function abortReply(): void {
-		$replyingTo = undefined;
-		$replyingToId = undefined;
-	}
+    function abortReply(): void {
+        $replyingTo = undefined;
+        $replyingToId = undefined;
+    }
 
-	onMount(() => {
-		unsubscribe = sendContent.subscribe((newContent) => {
-			// Multiline textarea should have adjustable height
-			const contentInput = document.getElementById('textarea-content');
+    onMount(() => {
+        unsubscribe = sendContent.subscribe((newContent) => {
+            // Multiline textarea should have adjustable height
+            const contentInput = document.getElementById('textarea-content');
 
-			let targetHeight: number;
+            let targetHeight: number;
 
-			// For empty text
-			if (!newContent || (newContent.length < 40 && newContent.indexOf('\n') == -1)) {
-				targetHeight = $replyingTo ? 70 : 55;
-			} else {
-				targetHeight = Math.min(contentInput.scrollHeight, $replyingTo ? 350 : 300);
-			}
+            // For empty text
+            if (
+                !newContent ||
+                (newContent.length < 40 && newContent.indexOf('\n') == -1)
+            ) {
+                targetHeight = $replyingTo ? 70 : 55;
+            } else {
+                targetHeight = Math.min(
+                    contentInput.scrollHeight,
+                    $replyingTo ? 350 : 300
+                );
+            }
 
-			// Also add margin for the messages to be visible
-			contentInput.style.height = `${targetHeight}px`;
+            // Also add margin for the messages to be visible
+            contentInput.style.height = `${targetHeight}px`;
 
-			// Share the value
-			$targetSendHeight = targetHeight;
-		});
-	});
+            // Share the value
+            $targetSendHeight = targetHeight;
+        });
+    });
 
-	onDestroy(() => {
-		unsubscribe();
-	});
+    onDestroy(() => {
+        unsubscribe();
+    });
 </script>
 
-<div class="send-container" in:fly={{ y: 150, duration: $maxChatAnimDelay + 200 }}>
-	{#if $replyingTo}
-		<div class="reply-container" in:fade={{ duration: 300 }}>
-			<Abort callback={abortReply} />
-			<h1 id="reply-name">
-				Replying to <span>{$replyingTo}</span>
-			</h1>
-		</div>
-	{/if}
+<div
+    class="send-container"
+    in:fly={{ y: 150, duration: $maxChatAnimDelay + 200 }}
+>
+    {#if $replyingTo}
+        <div class="reply-container" in:fade={{ duration: 300 }}>
+            <Abort callback={abortReply} />
+            <h1 id="reply-name">
+                Replying to <span>{$replyingTo}</span>
+            </h1>
+        </div>
+    {/if}
 
-	<textarea id="textarea-content" bind:value={$sendContent} maxlength={512} />
+    <textarea id="textarea-content" bind:value={$sendContent} maxlength={512} />
 </div>
 
 <style>
-	.send-container {
-		width: 50%;
-		min-width: 600px;
-		min-height: 65px;
-		position: fixed;
-		bottom: 15px;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		background: var(--nav_bg_color);
-		box-shadow: 0 0 10px var(--nav_shadow_color);
-		-webkit-touch-callout: none;
-		-webkit-user-select: none;
-		-khtml-user-select: none;
-		-moz-user-select: none;
-		-ms-user-select: none;
-		user-select: none;
-		backdrop-filter: blur(5px);
-	}
+    .send-container {
+        width: 50%;
+        min-width: 600px;
+        min-height: 65px;
+        position: fixed;
+        bottom: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: var(--nav_bg_color);
+        box-shadow: 0 0 10px var(--nav_shadow_color);
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        backdrop-filter: blur(5px);
+    }
 
-	.send-container textarea {
-		background: transparent;
-		font-size: 2.1rem;
-		color: var(--profile_info_color);
-		overflow: auto;
-	}
+    .send-container textarea {
+        background: transparent;
+        font-size: 2.1rem;
+        color: var(--profile_info_color);
+        overflow: auto;
+    }
 
-	.reply-container {
-		display: flex;
-		align-items: center;
-	}
+    .reply-container {
+        display: flex;
+        align-items: center;
+    }
 
-	.reply-container #reply-name {
-		font-size: 1.9rem;
-		margin: 0;
-		padding: 10px;
-		padding-left: 5px;
-	}
+    .reply-container #reply-name {
+        font-size: 1.9rem;
+        margin: 0;
+        padding: 10px;
+        padding-left: 5px;
+    }
 
-	.reply-container #reply-name span {
-		color: var(--profile_info_color);
-	}
+    .reply-container #reply-name span {
+        color: var(--profile_info_color);
+    }
 
-	@media screen and (max-width: 720px) {
-		.send-container {
-			bottom: 110px;
-			width: 80%;
-			min-width: initial;
-			min-height: 55px;
-			backdrop-filter: none;
-		}
+    @media screen and (max-width: 720px) {
+        .send-container {
+            bottom: 110px;
+            width: 80%;
+            min-width: initial;
+            min-height: 55px;
+            backdrop-filter: none;
+        }
 
-		.send-container textarea {
-			font-size: 1.9rem;
-		}
+        .send-container textarea {
+            font-size: 1.9rem;
+        }
 
-		.reply-container #reply-name {
-			font-size: 1.6rem;
-		}
-	}
+        .reply-container #reply-name {
+            font-size: 1.6rem;
+        }
+    }
 
-	@media screen and (max-width: 720px) {
-		.send-container {
-			bottom: 85px;
-			width: 70%;
-		}
+    @media screen and (max-width: 720px) {
+        .send-container {
+            bottom: 85px;
+            width: 70%;
+        }
 
-		.send-container textarea {
-			font-size: 1.4rem;
-			min-height: 45px;
-		}
+        .send-container textarea {
+            font-size: 1.4rem;
+            min-height: 45px;
+        }
 
-		.reply-container #reply-name {
-			font-size: 1.4rem;
-		}
-	}
+        .reply-container #reply-name {
+            font-size: 1.4rem;
+        }
+    }
 </style>

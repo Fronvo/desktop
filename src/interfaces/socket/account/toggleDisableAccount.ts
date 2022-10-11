@@ -5,7 +5,7 @@
 import type { FronvoError } from 'interfaces/socket/all';
 
 export interface ToggleDisableAccountParams {
-	profileId: string;
+    profileId: string;
 }
 
 export interface ToggleDisableAccountResult extends FronvoError {}

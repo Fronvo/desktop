@@ -11,28 +11,28 @@ import { writable } from 'svelte/store';
 export let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
 export function initSocket(callback?: () => void): void {
-	// Only init once, callback discarded
-	if (socket) return;
+    // Only init once, callback discarded
+    if (socket) return;
 
-	socket = io('wss://fronvosrv.fly.dev', {
-		transports: ['websocket'],
-		path: '/fronvo',
-		parser: binaryParser,
-		onlyBinaryUpgrades: true,
-	});
+    socket = io('wss://fronvosrv.fly.dev', {
+        transports: ['websocket'],
+        path: '/fronvo',
+        parser: binaryParser,
+        onlyBinaryUpgrades: true,
+    });
 
-	if (callback) {
-		socket.on('connect', callback);
-	}
+    if (callback) {
+        socket.on('connect', callback);
+    }
 }
 
 export function resetSocket(): void {
-	// Only reset once
-	if (!socket) return;
+    // Only reset once
+    if (!socket) return;
 
-	socket.disconnect();
+    socket.disconnect();
 
-	socket = undefined;
+    socket = undefined;
 }
 
 export const showLayout = writable(false);

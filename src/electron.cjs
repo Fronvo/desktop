@@ -3,7 +3,7 @@ const { app, BrowserWindow } = require('electron');
 const serve = require('electron-serve');
 
 try {
-	require('electron-reloader')(module);
+    require('electron-reloader')(module);
 } catch (e) {}
 
 const serveURL = serve({ directory: '.' });
@@ -12,66 +12,66 @@ const dev = !app.isPackaged;
 let mainWindow;
 
 function createWindow() {
-	let windowState = windowStateManager({
-		defaultWidth: 1000,
-		defaultHeight: 1000,
-	});
+    let windowState = windowStateManager({
+        defaultWidth: 1000,
+        defaultHeight: 1000,
+    });
 
-	const mainWindow = new BrowserWindow({
-		autoHideMenuBar: true,
-		minHeight: 700,
-		minWidth: 700,
-		webPreferences: {
-			enableRemoteModule: true,
-			contextIsolation: true,
-			nodeIntegration: true,
-			spellcheck: false,
-			devTools: dev,
-		},
-	});
+    const mainWindow = new BrowserWindow({
+        autoHideMenuBar: true,
+        minHeight: 700,
+        minWidth: 700,
+        webPreferences: {
+            enableRemoteModule: true,
+            contextIsolation: true,
+            nodeIntegration: true,
+            spellcheck: false,
+            devTools: dev,
+        },
+    });
 
-	windowState.manage(mainWindow);
+    windowState.manage(mainWindow);
 
-	mainWindow.once('ready-to-show', () => {
-		mainWindow.show();
-	});
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.show();
+    });
 
-	mainWindow.on('close', () => {
-		windowState.saveState(mainWindow);
-	});
+    mainWindow.on('close', () => {
+        windowState.saveState(mainWindow);
+    });
 
-	return mainWindow;
+    return mainWindow;
 }
 
 function loadVite(port) {
-	mainWindow.loadURL(`http://localhost:${port}`).catch((e) => {
-		console.log('Error loading URL, retrying', e);
-		setTimeout(() => {
-			loadVite(port);
-		}, 200);
-	});
+    mainWindow.loadURL(`http://localhost:${port}`).catch((e) => {
+        console.log('Error loading URL, retrying', e);
+        setTimeout(() => {
+            loadVite(port);
+        }, 200);
+    });
 }
 
 function createMainWindow() {
-	mainWindow = createWindow();
-	mainWindow.once('close', () => {
-		mainWindow = null;
-	});
+    mainWindow = createWindow();
+    mainWindow.once('close', () => {
+        mainWindow = null;
+    });
 
-	if (dev) loadVite(port);
-	else serveURL(mainWindow);
+    if (dev) loadVite(port);
+    else serveURL(mainWindow);
 }
 
 app.once('ready', () => {
-	createMainWindow();
+    createMainWindow();
 });
 
 app.on('activate', () => {
-	if (!mainWindow) {
-		createMainWindow();
-	}
+    if (!mainWindow) {
+        createMainWindow();
+    }
 });
 
 app.on('window-all-closed', () => {
-	if (process.platform !== 'darwin') app.quit();
+    if (process.platform !== 'darwin') app.quit();
 });

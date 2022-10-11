@@ -5,7 +5,7 @@
 import type { FronvoError } from 'interfaces/socket/all';
 
 export interface ResetPasswordParams {
-	email: string;
+    email: string;
 }
 
 export interface ResetPasswordResult extends FronvoError {}

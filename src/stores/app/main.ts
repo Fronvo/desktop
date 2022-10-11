@@ -33,20 +33,20 @@ export const currentPanelId = writable(0);
 
 // Modal settings
 export const modals = [
-	SettingsModal,
-	FollowInfoModal,
-	EditProfileModal,
-	CreatePostModal,
-	PostModal,
-	FindProfilesModal,
-	MaxOnlineTimeModal,
-	CreateCommunityModal,
-	JoinCommunityModal,
-	FindCommunitiesModal,
-	LeaveCommunityModal,
-	CommunityMembers,
-	EditCommunityModal,
-	EditCommunityMemberModal,
+    SettingsModal,
+    FollowInfoModal,
+    EditProfileModal,
+    CreatePostModal,
+    PostModal,
+    FindProfilesModal,
+    MaxOnlineTimeModal,
+    CreateCommunityModal,
+    JoinCommunityModal,
+    FindCommunitiesModal,
+    LeaveCommunityModal,
+    CommunityMembers,
+    EditCommunityModal,
+    EditCommunityMemberModal,
 ];
 
 // Dropdown settings

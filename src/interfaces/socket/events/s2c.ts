@@ -6,38 +6,38 @@ import type { ChatRequestUpdatedResult } from 'interfaces/socket/account/chatReq
 import type { CommunityMessageDeletedResult } from 'interfaces/socket/account/communityMessageDeleted';
 import type { NewCommunityMessageResult } from 'interfaces/socket/account/newCommunityMessage';
 import type {
-	RegisterVerifyParams,
-	RegisterVerifyResult,
+    RegisterVerifyParams,
+    RegisterVerifyResult,
 } from 'interfaces/socket/noAccount/registerVerify';
 import type {
-	ResetPasswordFinalParams,
-	ResetPasswordFinalResult,
+    ResetPasswordFinalParams,
+    ResetPasswordFinalResult,
 } from 'interfaces/socket/noAccount/resetPasswordFinal';
 import type {
-	ResetPasswordVerifyParams,
-	ResetPasswordVerifyResult,
+    ResetPasswordVerifyParams,
+    ResetPasswordVerifyResult,
 } from 'interfaces/socket/noAccount/resetPasswordVerify';
 import type { MemberJoinedResult } from '../account/memberJoined';
 import type { MemberLeftResult } from '../account/memberLeft';
 
 export interface ServerToClientEvents {
-	registerVerify: (
-		{}: RegisterVerifyParams,
-		callback?: ({}: RegisterVerifyResult) => void,
-	) => void;
-	resetPasswordVerify: (
-		{}: ResetPasswordVerifyParams,
-		callback?: ({}: ResetPasswordVerifyResult) => void,
-	) => void;
+    registerVerify: (
+        {}: RegisterVerifyParams,
+        callback?: ({}: RegisterVerifyResult) => void
+    ) => void;
+    resetPasswordVerify: (
+        {}: ResetPasswordVerifyParams,
+        callback?: ({}: ResetPasswordVerifyResult) => void
+    ) => void;
 
-	resetPasswordFinal: (
-		{}: ResetPasswordFinalParams,
-		callback?: ({}: ResetPasswordFinalResult) => void,
-	) => void;
-	newCommunityMessage: ({}: NewCommunityMessageResult) => void;
-	communityMessageDeleted: ({}: CommunityMessageDeletedResult) => void;
-	communityDeleted: () => void;
-	chatRequestUpdated: ({}: ChatRequestUpdatedResult) => void;
-	memberJoined: ({}: MemberJoinedResult) => void;
-	memberLeft: ({}: MemberLeftResult) => void;
+    resetPasswordFinal: (
+        {}: ResetPasswordFinalParams,
+        callback?: ({}: ResetPasswordFinalResult) => void
+    ) => void;
+    newCommunityMessage: ({}: NewCommunityMessageResult) => void;
+    communityMessageDeleted: ({}: CommunityMessageDeletedResult) => void;
+    communityDeleted: () => void;
+    chatRequestUpdated: ({}: ChatRequestUpdatedResult) => void;
+    memberJoined: ({}: MemberJoinedResult) => void;
+    memberLeft: ({}: MemberLeftResult) => void;
 }

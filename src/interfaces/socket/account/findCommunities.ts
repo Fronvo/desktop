@@ -5,10 +5,10 @@
 import type { FronvoError } from 'interfaces/socket/all';
 
 export interface FindCommunitiesParams {
-	name: string;
-	maxResults?: string;
+    name: string;
+    maxResults?: string;
 }
 
 export interface FindCommunitiesResult extends FronvoError {
-	findResults: string[];
+    findResults: string[];
 }

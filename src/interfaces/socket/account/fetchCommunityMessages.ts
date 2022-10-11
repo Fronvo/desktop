@@ -8,5 +8,5 @@ import type { CommunityMessage } from 'interfaces/app/communities';
 export interface FetchCommunityMessagesParams {}
 
 export interface FetchCommunityMessagesResult extends FronvoError {
-	communityMessages: CommunityMessage[];
+    communityMessages: CommunityMessage[];
 }

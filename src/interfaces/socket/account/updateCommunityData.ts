@@ -6,12 +6,12 @@ import type { FronvoError } from 'interfaces/socket/all';
 import type { Community } from 'interfaces/app/communities';
 
 export interface UpdateCommunityDataParams {
-	communityId?: string;
-	name?: string;
-	description?: string;
-	icon?: string;
+    communityId?: string;
+    name?: string;
+    description?: string;
+    icon?: string;
 }
 
 export interface UpdateCommunityDataResult extends FronvoError {
-	communityData: Partial<Community>;
+    communityData: Partial<Community>;
 }

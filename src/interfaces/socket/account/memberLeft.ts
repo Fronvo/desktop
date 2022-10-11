@@ -3,5 +3,5 @@
 // ******************** //
 
 export interface MemberLeftResult {
-	profileId: string;
+    profileId: string;
 }

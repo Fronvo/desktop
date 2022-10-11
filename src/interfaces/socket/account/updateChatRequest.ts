@@ -5,8 +5,8 @@
 import type { FronvoError } from 'interfaces/socket/all';
 
 export interface UpdateChatRequestParams {
-	profileId: string;
-	accepted: boolean;
+    profileId: string;
+    accepted: boolean;
 }
 
 export interface UpdateChatRequestResult extends FronvoError {}
