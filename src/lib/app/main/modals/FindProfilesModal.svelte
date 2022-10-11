@@ -152,20 +152,18 @@
                         <h1 id="profileId">{profileId}</h1>
 
                         <h1 id="following">
-                            <span>
-                                {isFollower || isSelf || !isPrivate
+                            <span
+                                >{isFollower || isSelf || !isPrivate
                                     ? following.length
-                                    : '?'}
-                            </span>
-                            following
+                                    : '?'}</span
+                            > following
                         </h1>
                         <h1 id="followers">
-                            <span>
-                                {isFollower || isSelf || !isPrivate
+                            <span
+                                >{isFollower || isSelf || !isPrivate
                                     ? followers.length
-                                    : '?'}
-                            </span>
-                            followers
+                                    : '?'}</span
+                            > followers
                         </h1>
                     </div>
                 {/each}
@@ -176,10 +174,8 @@
             id="close"
             on:click={() => {
                 dismissModal();
-            }}
+            }}>Close</button
         >
-            Close
-        </button>
     {:else}
         <Loading text="Loading..." />
     {/if}

@@ -40,9 +40,11 @@
         <button on:click={editCommmunity}>Edit</button>
     {/if}
 
-    <button on:click={viewMembers}>
-        Members {isOwner() && pendingRequests > 0 ? `(${pendingRequests})` : ''}
-    </button>
+    <button on:click={viewMembers}
+        >Members {isOwner() && pendingRequests > 0
+            ? `(${pendingRequests})`
+            : ''}</button
+    >
 
     <button on:click={leaveCommunity}>{isOwner() ? 'Delete' : 'Leave'}</button>
 </div>

@@ -126,10 +126,8 @@
         <button
             on:click={() => {
                 if (!isSharing) dismissModal();
-            }}
+            }}>Discard</button
         >
-            Discard
-        </button>
     </div>
 </div>
 

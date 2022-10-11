@@ -135,10 +135,8 @@
         <button
             on:click={() => {
                 if (!isCreating) dismissModal();
-            }}
+            }}>Discard</button
         >
-            Discard
-        </button>
     </div>
 </div>
 

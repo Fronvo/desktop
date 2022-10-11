@@ -1,7 +1,5 @@
 <script lang="ts">
     import { ModalTypes } from 'types/app/main';
-    import { quadIn } from 'svelte/easing';
-    import { draw } from 'svelte/transition';
     import { showModal } from 'utilities/app/main';
 </script>
 
@@ -12,41 +10,37 @@
     width="48"
     height="48"
     on:click={() => showModal(ModalTypes.EditProfile)}
->
-    <defs>
-        <linearGradient id="EDIT" gradientUnits="userSpaceOnUse" />
-        <linearGradient
+    ><defs
+        ><linearGradient
+            id="EDIT"
+            gradientUnits="userSpaceOnUse"
+        /><linearGradient
             id="edit"
             x1="47"
             y1="9.6"
             x2="1"
             y2="38.4"
             href="#EDIT"
-        >
-            <stop stop-color="#b98bff" />
-            <stop offset="1" stop-color="#710fff" />
-        </linearGradient>
-    </defs>
-    <style>
+            ><stop stop-color="#b98bff" /><stop
+                offset="1"
+                stop-color="#710fff"
+            /></linearGradient
+        ></defs
+    ><style>
         .edit {
             fill: url(#edit);
             stroke-width: 0;
         }
-    </style>
-    <path
-        in:draw={{ duration: 1000, easing: quadIn }}
+    </style><path
         class="edit"
         d="M9 39h2.2l22.15-22.15-2.2-2.2L9 36.8Zm30.7-24.3-6.4-6.4 2.1-2.1q.85-.85 2.1-.85t2.1.85l2.2 2.2q.85.85.85 2.1t-.85 2.1Zm-2.1 2.1L12.4 42H6v-6.4l25.2-25.2Zm-5.35-1.05-1.1-1.1 2.2 2.2Z"
-    />
-</svg>
+    /></svg
+>
 
 <style>
     svg {
-        fill: none;
-        stroke: var(--svg_stroke);
-        stroke-width: 2px;
         cursor: pointer;
-        transition: 100ms all;
+        transition: 100ms transform;
         -webkit-touch-callout: none;
         -webkit-user-select: none;
         -khtml-user-select: none;
@@ -65,9 +59,6 @@
 
     @media screen and (max-width: 720px) {
         svg {
-            margin-bottom: 0;
-            margin-top: 0;
-            margin-right: 20px;
             cursor: default;
         }
 
@@ -80,7 +71,6 @@
         svg {
             width: 40px;
             height: 40px;
-            margin-right: 10px;
         }
     }
 </style>

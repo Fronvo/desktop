@@ -103,10 +103,8 @@
         <button
             on:click={() => {
                 dismissModal();
-            }}
+            }}>Close</button
         >
-            Close
-        </button>
     </div>
 </div>
 

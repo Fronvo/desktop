@@ -116,16 +116,14 @@
                             >{isFollower || isSelf || !isPrivate
                                 ? following.length
                                 : '?'}</span
-                        >
-                        following
+                        > following
                     </h1>
                     <h1 id="followers">
                         <span
                             >{isFollower || isSelf || !isPrivate
                                 ? followers.length
                                 : '?'}</span
-                        >
-                        followers
+                        > followers
                     </h1>
                 </div>
             {/each}
@@ -135,10 +133,8 @@
             id="close"
             on:click={() => {
                 dismissModal();
-            }}
+            }}>Close</button
         >
-            Close
-        </button>
     {:else}
         <Loading text="Loading..." />
     {/if}

@@ -95,9 +95,9 @@
         {/if}
 
         <button on:click={viewProfile}>View profile</button>
-        <button on:click={updateChatPerms}>
-            {hasChatPerms() ? 'Revoke' : 'Give'} chat permission
-        </button>
+        <button on:click={updateChatPerms}
+            >{hasChatPerms() ? 'Revoke' : 'Give'} chat permission</button
+        >
     </div>
 
     <div class="options-container">

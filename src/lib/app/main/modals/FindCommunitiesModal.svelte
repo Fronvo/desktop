@@ -148,10 +148,8 @@
             id="close"
             on:click={() => {
                 dismissModal();
-            }}
+            }}>Close</button
         >
-            Close
-        </button>
     {:else}
         <Loading text="Loading..." />
     {/if}

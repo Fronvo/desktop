@@ -167,10 +167,8 @@
         <button
             on:click={() => {
                 if (!isUploading) dismissModal();
-            }}
+            }}>Discard</button
         >
-            Discard
-        </button>
     </div>
 </div>
 

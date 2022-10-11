@@ -53,8 +53,7 @@
         <Center>
             <h1 id="leave-community">
                 {isOwner() ? 'Delete' : 'Leave'} the
-                <span>{$joinedCommunity.name}</span>
-                community?
+                <span>{$joinedCommunity.name}</span> community?
             </h1>
         </Center>
 
@@ -66,10 +65,8 @@
             <button
                 on:click={() => {
                     if (!isLeaving) dismissModal();
-                }}
+                }}>No, {isOwner() ? 'keep' : 'stay'}</button
             >
-                No, {isOwner() ? 'keep' : 'stay'}
-            </button>
         </div>
     </div>
 {/if}

@@ -76,9 +76,7 @@
             <h1 id="name">{$targetCommunityData.name}</h1>
 
             <h1 id="description">{$targetCommunityData.description}</h1>
-            <h1 id="creation-date">
-                Created <span>{formatDate()}</span>
-            </h1>
+            <h1 id="creation-date">Created <span>{formatDate()}</span></h1>
             <h1 id="owner">
                 Owned by <span>{$targetCommunityData.ownerId}</span>
             </h1>

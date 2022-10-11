@@ -55,23 +55,20 @@
             <button
                 in:fade={{ duration: 500, delay: 1000 }}
                 on:click={() => showModal(ModalTypes.CreateCommunity)}
+                >Create your own</button
             >
-                Create your own
-            </button>
 
             <button
                 in:fade={{ duration: 500, delay: 1150 }}
                 on:click={() => showModal(ModalTypes.JoinCommunity)}
+                >Join with invite</button
             >
-                Join with invite
-            </button>
 
             <button
                 in:fade={{ duration: 500, delay: 1300 }}
                 on:click={() => showModal(ModalTypes.FindCommunities)}
+                >Find communities</button
             >
-                Find communities
-            </button>
         </div>
     </div>
 {/if}

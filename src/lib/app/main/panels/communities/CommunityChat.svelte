@@ -393,11 +393,11 @@
                     <div class="reply-container">
                         {#if findMessageById(replyId)}
                             <h1 id="reply-name">
-                                Replying to <span>
-                                    {findCachedData(
+                                Replying to <span
+                                    >{findCachedData(
                                         findMessageById(replyId).ownerId
-                                    ).username}
-                                </span>
+                                    ).username}</span
+                                >
                             </h1>
                             <h1 id="reply-message">
                                 {findMessageById(replyId).content}

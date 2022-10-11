@@ -72,10 +72,8 @@
         <button
             on:click={() => {
                 if (!isJoining) dismissModal();
-            }}
+            }}>Discard</button
         >
-            Discard
-        </button>
     </div>
 </div>
 

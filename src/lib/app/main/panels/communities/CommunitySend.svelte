@@ -58,9 +58,7 @@
     {#if $replyingTo}
         <div class="reply-container" in:fade={{ duration: 300 }}>
             <Abort callback={abortReply} />
-            <h1 id="reply-name">
-                Replying to <span>{$replyingTo}</span>
-            </h1>
+            <h1 id="reply-name">Replying to <span>{$replyingTo}</span></h1>
         </div>
     {/if}
 
@@ -125,11 +123,11 @@
         }
 
         .reply-container #reply-name {
-            font-size: 1.6rem;
+            font-size: 1.7rem;
         }
     }
 
-    @media screen and (max-width: 720px) {
+    @media screen and (max-width: 520px) {
         .send-container {
             bottom: 85px;
             width: 70%;
@@ -141,7 +139,7 @@
         }
 
         .reply-container #reply-name {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
         }
     }
 </style>

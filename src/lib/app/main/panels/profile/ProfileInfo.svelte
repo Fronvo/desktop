@@ -137,13 +137,11 @@
         <!-- Follow $userData -->
         <div class="follow-container">
             <h1 on:click={() => showFollowInfo($userData.following, true)}>
-                <span>{formatFollowInfo($userData.following.length)}</span>
-                following
+                <span>{formatFollowInfo($userData.following.length)}</span> following
             </h1>
 
             <h1 on:click={() => showFollowInfo($userData.followers, false)}>
-                <span>{formatFollowInfo($userData.followers.length)}</span>
-                followers
+                <span>{formatFollowInfo($userData.followers.length)}</span> followers
             </h1>
         </div>
 
