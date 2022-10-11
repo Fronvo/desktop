@@ -1,9 +1,4 @@
 /// <reference types="svelte" />
-/// <reference types="@sveltejs/kit" />
-/// <reference types="vite/client" />
-declare interface Window {
-    electron: any;
-}
 
 declare module 'svelte-checkbox' {
     import type { SvelteComponentTyped } from 'svelte';

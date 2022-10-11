@@ -1,6 +1,6 @@
 {
     "name": "fronvo-desktop",
-    "version": "0.1.2",
+    "version": "0.1.4",
     "private": true,
     "description": "The desktop app of the free-convo chat app.",
     "main": "src/electron.cjs",
@@ -27,6 +27,7 @@
         "Chrome 89"
     ],
     "dependencies": {
+        "@sveltejs/adapter-vercel": "^1.0.0-next.78",
         "@sveltejs/kit": "1.0.0-next.443",
         "electron-context-menu": "^3.3.0",
         "electron-reloader": "^1.2.3",
