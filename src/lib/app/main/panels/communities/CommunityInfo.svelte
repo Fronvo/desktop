@@ -37,6 +37,7 @@
 		padding: 10px;
 		border-radius: 10px;
 		backdrop-filter: blur(5px);
+		z-index: 1;
 	}
 
 	.info-container #icon {
