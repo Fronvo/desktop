@@ -14,8 +14,12 @@
     } from 'stores/communities';
     import { homePosts } from 'stores/home';
     import { loginSucceeded } from 'stores/main';
+    import { profileLoadingFinished, targetProfile } from 'stores/profile';
+    import { setProgressBar } from 'utilities/main';
 
     function logout(): void {
+        setProgressBar(true);
+
         socket.emit('logout', ({ err }) => {
             if (err) return;
 
@@ -35,6 +39,12 @@
             $targetCommunityMessages = undefined;
             $replyingTo = undefined;
             $replyingToId = undefined;
+
+            // And profiles
+            $profileLoadingFinished = false;
+            $targetProfile = undefined;
+
+            setProgressBar(false);
         });
     }
 </script>

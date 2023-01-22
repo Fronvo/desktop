@@ -1,22 +1,23 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import Loading from '$lib/app/Loading.svelte';
     import HomeGrass from '$lib/app/main/panels/home/HomeGrass.svelte';
     import HomePosts from '$lib/app/main/panels/home/HomePosts.svelte';
     import { socket } from 'stores/all';
     import { homePosts as homePostsStore } from 'stores/home';
     import { onMount } from 'svelte';
     import { fade } from 'svelte/transition';
-    import { setTitle } from 'utilities/main';
+    import { setProgressBar, setTitle } from 'utilities/main';
 
     onMount(() => {
         goto('/home', {
             replaceState: true,
         });
 
-        loadPosts();
-
         setTitle('Fronvo - Home');
+
+        setProgressBar(true);
+
+        loadPosts();
     });
 
     function loadPosts(): void {
@@ -24,20 +25,22 @@
         if (!$homePostsStore) {
             socket.emit('fetchHomePosts', ({ homePosts }) => {
                 $homePostsStore = homePosts;
+
+                setProgressBar(false);
             });
+        } else {
+            setProgressBar(false);
         }
     }
 </script>
 
-<div class="home-container" in:fade={{ duration: 200 }}>
+<div class="home-container">
     {#if $homePostsStore}
-        <h1 id="latest-posts">Latest posts</h1>
+        <h1 in:fade={{ duration: 500 }} id="latest-posts">Latest posts</h1>
 
         <HomePosts />
 
         <HomeGrass />
-    {:else}
-        <Loading text="Loading posts.." />
     {/if}
 </div>
 

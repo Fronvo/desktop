@@ -20,8 +20,13 @@
     import { onDestroy, onMount } from 'svelte';
     import Time from 'svelte-time';
     import type { Unsubscriber } from 'svelte/store';
-    import { fade, scale } from 'svelte/transition';
-    import { fetchUser, showModal } from 'utilities/main';
+    import { scale } from 'svelte/transition';
+    import {
+        dismissModal,
+        fetchUser,
+        setProgressBar,
+        showModal,
+    } from 'utilities/main';
     import linkifyHtml from 'linkify-html';
     import Reply from '$lib/svgs/Reply.svelte';
     import { ourProfileData } from 'stores/profile';
@@ -63,6 +68,7 @@
 
         if ($targetCommunityMessages.length == 0) {
             finalizedMessages = [];
+            setProgressBar(false);
             return;
         }
 
@@ -97,6 +103,8 @@
                 finalizedMessages = tempFinalizedMessages;
 
                 if (!showLoadMore) showLoadMore = true;
+
+                setProgressBar(false);
             }
         }
     }
@@ -105,6 +113,7 @@
         if (isLoadingMore) return;
 
         isLoadingMore = true;
+        setProgressBar(true);
 
         socket.emit(
             'fetchCommunityMessages',
@@ -148,45 +157,52 @@
     }
 
     function attachNewMessageListener(): void {
+        // Remove previous listeners
+        socket.off('newCommunityMessage');
+
         socket.on('newCommunityMessage', ({ newMessageData }) => {
             $targetCommunityMessages = [newMessageData].concat(
-                $targetCommunityMessages.concat(newMessageData)
+                $targetCommunityMessages
             );
 
             loadMessages();
-
-            if (newMessageData.ownerId != $ourProfileData.profileId) {
-                new Notification(
-                    findCachedData(newMessageData.ownerId).username,
-                    {
-                        body: newMessageData.content,
-                        icon:
-                            findCachedData(newMessageData.ownerId).avatar ||
-                            '/favicon.png',
-                        timestamp: Number(newMessageData.creationDate),
-                    }
-                );
-            }
         });
     }
 
     function attachDeletedMessageListener(): void {
+        socket.off('communityMessageDeleted');
+
         socket.on('communityMessageDeleted', ({ messageId }) => {
             for (const messageIndex in $targetCommunityMessages) {
                 const targetMessage = $targetCommunityMessages[messageIndex];
 
                 if (targetMessage.messageId == messageId) {
                     $targetCommunityMessages.splice(Number(messageIndex), 1);
+                    $joinedCommunity.totalMessages -= 1;
+
+                    if (
+                        $targetConfirmCommunityMessage?.messageId ==
+                        targetMessage.messageId
+                    ) {
+                        dismissModal();
+                    }
+
+                    if ($replyingToId == targetMessage.messageId) {
+                        $replyingTo = undefined;
+                        $replyingToId = undefined;
+                    }
+
+                    loadMessages();
 
                     break;
                 }
             }
-
-            loadMessages();
         });
     }
 
     function attachCommunityDeletedListener(): void {
+        socket.off('communityDeleted');
+
         if (!($ourProfileData.profileId == $joinedCommunity.ownerId)) {
             socket.on('communityDeleted', async () => {
                 await loadCommunitiesPanel();
@@ -195,6 +211,8 @@
     }
 
     function attachChatRequestListener(): void {
+        socket.off('chatRequestUpdated');
+
         socket.on('chatRequestUpdated', ({ accepted }) => {
             const contentInput = document.getElementById(
                 'textarea-content'
@@ -215,12 +233,12 @@
 
     function attachMemberChangeListener(): void {
         socket.on('memberJoined', ({ profileId }) => {
-            $joinedCommunity.members.push(profileId);
+            $joinedCommunity?.members.push(profileId);
         });
 
         socket.on('memberLeft', ({ profileId }) => {
-            $joinedCommunity.members.splice(
-                $joinedCommunity.members.indexOf(profileId),
+            $joinedCommunity?.members.splice(
+                $joinedCommunity?.members.indexOf(profileId),
                 1
             );
         });
@@ -248,6 +266,8 @@
 
         // Send message this way
         if (event.key == 'Enter' && $sendContent.length <= 500) {
+            setProgressBar(true);
+
             // Reset text
             contentInput.disabled = true;
 
@@ -255,8 +275,6 @@
 
             contentInput.value = '';
             $sendContent = '';
-
-            await loadMessages();
 
             setTimeout(() => {
                 contentInput.disabled = false;
@@ -299,6 +317,7 @@
     }
 
     onMount(() => {
+        // Reload listeners and messages
         checkChatRequest();
         loadMessages();
         attachChatRequestListener();
@@ -324,12 +343,6 @@
 
     onDestroy(() => {
         unsubscribe();
-        socket.off('chatRequestUpdated');
-        socket.off('communityMessageDeleted');
-        socket.off('newCommunityMessage');
-        socket.off('communityDeleted');
-        socket.off('memberJoined');
-        socket.off('memberLeft');
 
         document.removeEventListener('keydown', keyDownListener);
     });
@@ -343,7 +356,7 @@
             </h1>
         {:else if finalizedMessages}
             {#each finalizedMessages as { messageId, profileData, content, creationDate, isReply, replyId }, i}
-                <div class="message-container" in:fade={{ duration: 400 }}>
+                <div class="message-container">
                     <div class="message-info-container">
                         <img
                             id="avatar"
@@ -363,7 +376,6 @@
 
                             <!-- Only the community owner can delete messages -->
                             {#if $joinedCommunity?.ownerId == $ourProfileData.profileId}
-                                <!-- TODO: Confirmation modal -->
                                 <DeleteChatOption
                                     callback={() => deleteMessage(i)}
                                 />
@@ -507,7 +519,7 @@
 
     .message-info-container .menu-container {
         opacity: 0;
-        transition: 250ms;
+        transition: 200ms;
     }
 
     .reply-container {

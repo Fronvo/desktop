@@ -14,6 +14,7 @@ import {
     loginSucceeded,
     modalAnimDuration,
     modalVisible,
+    progressBarVisible,
 } from 'stores/main';
 import type { DropdownTypes, ModalTypes, PanelTypes } from 'types/main';
 import { getKey, removeKey, setKey } from './global';
@@ -122,6 +123,9 @@ export function showModal(newModal: ModalTypes): void {
 }
 
 export function dismissModal(callback?: Function): void {
+    // Pending operations
+    setProgressBar(false);
+
     if (!modalStateVisible) {
         if (callback) callback();
     } else {
@@ -165,4 +169,8 @@ export function dismissDropdown(callback?: Function): void {
 
 export function setTitle(title: string): void {
     fronvoTitle.set(title);
+}
+
+export function setProgressBar(state: boolean): void {
+    progressBarVisible.set(state);
 }
