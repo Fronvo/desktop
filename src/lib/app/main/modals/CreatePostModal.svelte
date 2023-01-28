@@ -6,7 +6,6 @@
     import { fade } from 'svelte/transition';
     import type { ModalData } from 'types/main';
     import { dismissModal, setProgressBar } from 'utilities/main';
-    import { loadProfilePanel } from 'utilities/profile';
     import ModalTemplate from '../ModalTemplate.svelte';
 
     let title: string;
@@ -49,7 +48,7 @@
                         to: ($userPosts.length + 1).toString(),
                     },
                     ({ profilePosts }) => {
-                        $userPosts = profilePosts.reverse();
+                        $userPosts = profilePosts;
                         $userData.totalPosts += 1;
                         dismissModal();
                     }

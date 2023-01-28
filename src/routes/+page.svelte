@@ -26,10 +26,10 @@
         dismissModal();
 
         // Disable __layout in index
-        $showLayout = false;
+        $showLayout = true;
 
         // Default when accessed
-        $indexVisible = true;
+        $indexVisible = false;
 
         // Show the index page
         mountReady = true;

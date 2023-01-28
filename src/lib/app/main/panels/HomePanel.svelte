@@ -1,33 +1,55 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import HomeGrass from '$lib/app/main/panels/home/HomeGrass.svelte';
     import HomePosts from '$lib/app/main/panels/home/HomePosts.svelte';
     import { socket } from 'stores/all';
-    import { homePosts as homePostsStore } from 'stores/home';
-    import { onMount } from 'svelte';
+    import { homePosts as homePostsStore, totalHomePosts } from 'stores/home';
+    import { loginSucceeded } from 'stores/main';
+    import { onDestroy, onMount } from 'svelte';
+    import type { Unsubscriber } from 'svelte/store';
     import { fade } from 'svelte/transition';
+    import { getKey } from 'utilities/global';
     import { setProgressBar, setTitle } from 'utilities/main';
 
-    onMount(() => {
-        goto('/home', {
-            replaceState: true,
-        });
+    let unsubscribe: Unsubscriber;
 
+    onMount(() => {
         setTitle('Fronvo - Home');
 
         setProgressBar(true);
 
-        loadPosts();
+        unsubscribe = loginSucceeded.subscribe((state) => {
+            if (typeof state == 'undefined') return;
+
+            if (
+                !location.href.includes('/profile') &&
+                !location.href.includes('community')
+            ) {
+                goto('/home', {
+                    replaceState: true,
+                });
+            }
+
+            loadPosts();
+        });
+    });
+
+    onDestroy(() => {
+        unsubscribe();
     });
 
     function loadPosts(): void {
         // Dont reload posts in the same session
         if (!$homePostsStore) {
-            socket.emit('fetchHomePosts', ({ homePosts }) => {
-                $homePostsStore = homePosts;
+            socket.emit(
+                getKey('token') ? 'fetchHomePosts' : 'fetchHomePostsGuest',
+                { from: '0', to: '15' },
+                ({ homePosts, totalPosts }) => {
+                    $totalHomePosts = totalPosts;
+                    $homePostsStore = homePosts;
 
-                setProgressBar(false);
-            });
+                    setProgressBar(false);
+                }
+            );
         } else {
             setProgressBar(false);
         }
@@ -39,8 +61,6 @@
         <h1 in:fade={{ duration: 500 }} id="latest-posts">Latest posts</h1>
 
         <HomePosts />
-
-        <HomeGrass />
     {/if}
 </div>
 

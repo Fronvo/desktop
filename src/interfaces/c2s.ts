@@ -20,7 +20,10 @@ import type {
     FetchCommunityMessagesParams,
     FetchCommunityMessagesResult,
 } from './account/fetchCommunityMessages';
-import type { FetchHomePostsResult } from './account/fetchHomePosts';
+import type {
+    FetchHomePostsParams,
+    FetchHomePostsResult,
+} from './account/fetchHomePosts';
 import type {
     FetchProfileDataParams,
     FetchProfileDataResult,
@@ -104,6 +107,10 @@ import type {
     RejectJoinRequestParams,
     RejectJoinRequestResult,
 } from './account/rejectJoinRequest';
+import type {
+    FetchHomePostsGuestParams,
+    FetchHomePostsGuestResult,
+} from './noAccount/fetchHomePostsGuest';
 
 export interface ClientToServerEvents {
     register: (
@@ -167,7 +174,10 @@ export interface ClientToServerEvents {
         {}: FindProfilesParams,
         callback?: ({}: FindProfilesResult) => void
     ) => void;
-    fetchHomePosts: (callback?: ({}: FetchHomePostsResult) => void) => void;
+    fetchHomePosts: (
+        {}: FetchHomePostsParams,
+        callback?: ({}: FetchHomePostsResult) => void
+    ) => void;
     createCommunity: (
         {}: CreateCommunityParams,
         callback?: ({}: CreateCommunityResult) => void
@@ -217,5 +227,9 @@ export interface ClientToServerEvents {
     rejectJoinRequest: (
         {}: RejectJoinRequestParams,
         callback?: ({}: RejectJoinRequestResult) => void
+    ) => void;
+    fetchHomePostsGuest: (
+        {}: FetchHomePostsGuestParams,
+        callback?: ({}: FetchHomePostsGuestResult) => void
     ) => void;
 }
