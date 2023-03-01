@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
     import type { FronvoError } from 'interfaces/all';
     import {
         accountPanelAnimDuration,
@@ -7,7 +6,7 @@
         accountResetPasswordTab,
         accountResetPasswordVerifyTab,
     } from 'stores/account';
-    import { socket } from 'stores/all';
+    import { socket } from 'stores/main';
     import { onMount, onDestroy } from 'svelte';
     import { fade, scale } from 'svelte/transition';
 
@@ -24,8 +23,6 @@
         }
 
         if (ev.ctrlKey || ev.altKey) return;
-
-        emailInput.focus();
     }
 
     onMount(() => {
@@ -34,11 +31,11 @@
             'reset-button'
         ) as HTMLButtonElement;
 
-        document.addEventListener('keypress', keyListener);
+        document.addEventListener('keydown', keyListener);
     });
 
     onDestroy(() => {
-        document.removeEventListener('keypress', keyListener);
+        document.removeEventListener('keydown', keyListener);
     });
 
     function reset(): void {
@@ -58,7 +55,7 @@
 
         function attemptReset(): void {
             // Little hack to recieve required field messages
-            socket.emit('resetPassword', { email }, ({ err }) => {
+            socket.emit('resetPassword', { email: email || '' }, ({ err }) => {
                 if (err) {
                     setError({ err });
                     toggleUI(true);
@@ -163,6 +160,18 @@
         width: 90%;
         border: 3px solid white;
         padding: 7px;
+        background-size: 200% auto;
+        background-image: linear-gradient(
+            to right,
+            rgb(102, 0, 255) 0%,
+            rgb(146, 73, 255) 51%,
+            rgb(102, 0, 255) 100%
+        );
+        color: white;
+    }
+
+    .reset-container button:hover {
+        background-position: bottom center;
     }
 
     .reset-container #login-redirect {
@@ -184,38 +193,7 @@
         color: rgb(233, 206, 255);
     }
 
-    @media screen and (max-width: 720px) {
-        .reset-container {
-            width: 450px;
-        }
-
-        .reset-container #header {
-            font-size: 2.5rem;
-        }
-
-        .reset-container #error-header {
-            font-size: 1.7rem;
-        }
-
-        .reset-container #input-header {
-            font-size: 1.7rem;
-        }
-
-        .reset-container input {
-            font-size: 1.7rem;
-        }
-
-        .reset-container button {
-            font-size: 2.2rem;
-        }
-
-        .reset-container #login-redirect {
-            font-size: 1.7rem;
-            cursor: default;
-        }
-    }
-
-    @media screen and (max-width: 520px) {
+    @media screen and (max-width: 700px) {
         .reset-container {
             width: 350px;
         }

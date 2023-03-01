@@ -1,6 +1,5 @@
 const windowStateManager = require('electron-window-state');
-const contextMenu = require('electron-context-menu');
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const serve = require('electron-serve');
 const path = require('path');
 
@@ -22,27 +21,20 @@ function createWindow() {
 	});
 
 	const mainWindow = new BrowserWindow({
-		backgroundColor: 'whitesmoke',
-		titleBarStyle: 'hidden',
+		backgroundColor: 'rgb(30, 30, 30)',
+		titleBarStyle: 'default',
 		autoHideMenuBar: true,
-		trafficLightPosition: {
-			x: 17,
-			y: 32,
-		},
-		minHeight: 450,
-		minWidth: 500,
 		webPreferences: {
 			enableRemoteModule: true,
 			contextIsolation: true,
 			nodeIntegration: true,
 			spellcheck: false,
-			devTools: true,
+			devTools: dev,
 			preload: path.join(__dirname, 'preload.cjs'),
 		},
-		x: windowState.x,
-		y: windowState.y,
-		width: windowState.width,
-		height: windowState.height,
+		center: true,
+		width: 1300,
+		height: 850
 	});
 
 	windowState.manage(mainWindow);
@@ -86,8 +78,4 @@ app.on('activate', () => {
 });
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') app.quit();
-});
-
-ipcMain.on('to-main', (event, count) => {
-	return mainWindow.webContents.send('from-main', `next count is ${count + 1}`);
 });

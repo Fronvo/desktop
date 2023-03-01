@@ -1,23 +1,28 @@
+<!-- LEGACY ROUTE -->
 <script lang="ts">
-    import { page } from '$app/stores';
-    import { targetCommunity } from 'stores/communities';
-    import { showLayout } from 'stores/all';
-    import { ModalTypes, PanelTypes } from 'types/main';
     import { showModal, switchPanel } from 'utilities/main';
     import { getKey } from 'utilities/global';
-    import { goto } from '$app/navigation';
+    import { loginSucceeded, showLayout } from 'stores/main';
+    import { PanelTypes } from 'stores/panels';
+    import { ModalTypes } from 'stores/modals';
+    import { ourData } from 'stores/profile';
 
-    $targetCommunity = $page.params.communityId;
     $showLayout = true;
+    let linkFired = false;
 
-    // Update panel
-    if (getKey('token')) {
-        switchPanel(PanelTypes.Communities);
-    } else {
-        goto('/home', {
-            replaceState: true,
-        });
+    if (!getKey('token')) {
+        switchPanel(PanelTypes.Home);
 
         showModal(ModalTypes.JoinFronvo);
     }
+
+    loginSucceeded.subscribe((state) => {
+        if (!state || linkFired) return;
+
+        if ($ourData?.isInCommunity) {
+            switchPanel(PanelTypes.Community);
+
+            linkFired = true;
+        }
+    });
 </script>

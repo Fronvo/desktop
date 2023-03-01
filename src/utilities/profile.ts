@@ -1,105 +1,93 @@
 import { goto } from '$app/navigation';
 import type { FronvoAccount } from 'interfaces/all';
-import { socket } from 'stores/all';
-import { ourProfileData } from 'stores/profile';
+import { PanelTypes } from 'stores/panels';
 import {
-    profileLoadingFinished,
-    userCommunity,
-    userData,
-    userPosts,
+    ourData,
+    ourPosts,
+    pendingSearchId,
+    searchData,
+    searchPosts,
 } from 'stores/profile';
-import { fetchPosts, fetchUser, setProgressBar } from './main';
+import { getKey } from './global';
+import {
+    fetchPosts,
+    fetchUser,
+    findCachedAccount,
+    setProgressBar,
+    switchPanel,
+    updateCachedAccount,
+} from './main';
 
-let ourData: FronvoAccount;
-let userDataGlobal: FronvoAccount;
-let isLoading = false;
-let lastTarget: string;
+export async function loadOurProfile(
+    cachedData: FronvoAccount[]
+): Promise<FronvoAccount> {
+    if (!getKey('token')) return;
 
-function setUserData(data: FronvoAccount): void {
-    userData.set(data);
-    userDataGlobal = data;
+    const tempOurData = await fetchUser();
+
+    // Force default value, we just want to cache our profile
+    await updateCachedAccount(tempOurData.profileId, cachedData, tempOurData);
+
+    ourData.set(tempOurData);
+    ourPosts.set(await fetchPosts(tempOurData.profileId));
+
+    return tempOurData;
 }
 
-export async function loadProfilePanel(targetProfile?: string): Promise<void> {
-    setProgressBar(true);
+export async function loadTargetProfile(
+    profileId: string,
+    cachedData: FronvoAccount[],
+    preventReload?: boolean
+): Promise<void> {
+    // Will also create if not found in cache
+    const data = await findCachedAccount(profileId, cachedData);
 
-    if (isLoading && targetProfile == lastTarget) return;
-
-    isLoading = true;
-    lastTarget = targetProfile;
-
-    // Reset previous data
-    profileLoadingFinished.set(false);
-    setUserData(undefined);
-    userPosts.set(undefined);
-    userCommunity.set(undefined);
-
-    // For follow relations and more
-    await loadOurData();
-
-    if (targetProfile && targetProfile != ourData.profileId) {
-        await loadTargetProfile(targetProfile);
-    } else {
-        await loadProfile();
-    }
-
-    if (userDataGlobal.isInCommunity) {
-        await loadProfileCommunity();
-    }
-
-    profileLoadingFinished.set(true);
-    isLoading = false;
-
-    setProgressBar(false);
-}
-
-export async function loadOurData(): Promise<FronvoAccount> {
-    ourData = await fetchUser();
-
-    ourProfileData.set(ourData);
-    userDataGlobal = ourData;
-
-    return ourData;
-}
-
-async function loadProfile(): Promise<void> {
-    setUserData(ourData);
-    userPosts.set(await fetchPosts(ourData.profileId));
-
-    // Didnt redirect before, no targetProfile
-    goto(`/profile/${ourData.profileId}`, {
-        replaceState: true,
-    });
-}
-
-async function loadTargetProfile(targetProfile?: string): Promise<void> {
-    // Redirect now
-    goto(`/profile/${targetProfile}`, {
-        replaceState: true,
-    });
-
-    const data = await fetchUser(targetProfile);
-
-    // Abort if it doesnt exist
+    // Invalid profile id
     if (!data) {
-        await loadProfile();
+        pendingSearchId.set(undefined);
+
+        goto('/home', {
+            replaceState: true,
+        });
+
+        switchPanel(PanelTypes.Home);
+
         return;
     }
 
-    setUserData(data);
-    userPosts.set(await fetchPosts(data.profileId));
-}
+    setProgressBar(true);
 
-async function loadProfileCommunity(): Promise<void> {
-    return new Promise((resolve) => {
-        socket.emit(
-            'fetchCommunityData',
-            { communityId: userDataGlobal.communityId },
-            ({ communityData }) => {
-                userCommunity.set(communityData);
+    pendingSearchId.set(data.profileId);
 
-                resolve();
-            }
-        );
+    searchData.set(data);
+    !preventReload && searchPosts.set(undefined);
+
+    if (preventReload) {
+        setProgressBar(false);
+        return;
+    }
+
+    // Guest mode check
+    if (data.totalPosts) {
+        if (
+            data.totalPosts != 0 ||
+            !data.isPrivate ||
+            data.isFollower ||
+            data.isSelf
+        ) {
+            searchPosts.set(await fetchPosts(data.profileId));
+        } else {
+            searchPosts.set([]);
+        }
+    } else {
+        searchPosts.set([]);
+    }
+
+    goto(`/@${data.profileId}`, {
+        replaceState: true,
     });
+
+    switchPanel(PanelTypes.Profile);
+
+    setProgressBar(false);
 }

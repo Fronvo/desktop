@@ -1,8 +1,7 @@
 <script lang="ts">
-    import { targetJoinRequestEmail } from 'stores/main';
-    import { socket } from 'stores/all';
+    import { socket } from 'stores/main';
+    import { targetRequestModal, type ModalData } from 'stores/modals';
     import { dismissModal, setProgressBar } from 'utilities/main';
-    import type { ModalData } from 'types/main';
     import ModalTemplate from '../ModalTemplate.svelte';
 
     function acceptJoinRequest(): void {
@@ -11,7 +10,7 @@
         socket.emit(
             'acceptJoinRequest',
             {
-                email: $targetJoinRequestEmail,
+                email: $targetRequestModal,
             },
             () => {
                 dismissModal();
@@ -26,7 +25,7 @@
         socket.emit(
             'rejectJoinRequest',
             {
-                email: $targetJoinRequestEmail,
+                email: $targetRequestModal,
             },
             () => {
                 dismissModal();
@@ -48,21 +47,20 @@
 </script>
 
 <ModalTemplate {data}>
-    <h1 id="email">{$targetJoinRequestEmail}</h1>
+    <h1 class="modal-header" id="email">{$targetRequestModal}</h1>
 
-    <button on:click={acceptJoinRequest}>Accept request</button>
+    <button class="modal-button" on:click={acceptJoinRequest}
+        >Accept request</button
+    >
 
     <br />
 
-    <button on:click={rejectJoinRequest}>Reject request</button>
+    <button class="modal-button" on:click={rejectJoinRequest}
+        >Reject request</button
+    >
 </ModalTemplate>
 
 <style>
-    button {
-        font-size: 1.8rem;
-        width: max-content;
-    }
-
     #email {
         font-size: 2.2rem;
         margin: 0;
@@ -73,21 +71,7 @@
         text-align: center;
     }
 
-    @media screen and (max-width: 720px) {
-        button {
-            font-size: 1.6rem;
-        }
-
-        #email {
-            font-size: 1.9rem;
-        }
-    }
-
-    @media screen and (max-width: 520px) {
-        button {
-            font-size: 1.4rem;
-        }
-
+    @media screen and (max-width: 700px) {
         #email {
             font-size: 1.5rem;
         }

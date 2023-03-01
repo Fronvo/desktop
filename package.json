@@ -1,6 +1,6 @@
 {
 	"name": "fronvo-desktop",
-	"version": "0.2.2",
+	"version": "0.3.0",
 	"private": true,
 	"description": "The desktop app of the free-convo chat app.",
 	"main": "src/electron.cjs",
@@ -34,7 +34,6 @@
 		"svelte-check": "^2.9.1",
 		"svelte-checkbox": "^1.0.1",
 		"svelte-css-vars": "^0.0.3",
-		"svelte-loading-spinners": "^0.1.7",
 		"svelte-particles": "^2.7.1",
 		"svelte-segmented-input": "^1.6.6",
 		"svelte-switch": "^0.0.5",

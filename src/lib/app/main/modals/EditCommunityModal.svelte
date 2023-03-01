@@ -1,20 +1,20 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
     import { dismissModal, setProgressBar } from 'utilities/main';
-    import { socket } from 'stores/all';
     import { onMount } from 'svelte';
     import { writable, type Writable } from 'svelte/store';
     import { fade } from 'svelte/transition';
-    import { joinedCommunity } from 'stores/communities';
     import Checkbox from 'svelte-checkbox';
-    import type { ModalData } from 'types/main';
     import ModalTemplate from '../ModalTemplate.svelte';
+    import { communityData as comData } from 'stores/community';
+    import { socket } from 'stores/main';
+    import type { ModalData } from 'stores/modals';
 
-    let communityId = $joinedCommunity.communityId;
-    let name = $joinedCommunity.name;
-    let description = $joinedCommunity.description;
-    let icon: Writable<string> = writable($joinedCommunity.icon);
-    let inviteOnly = $joinedCommunity.inviteOnly;
+    let id = $comData.communityId;
+    let name = $comData.name;
+    let icon: Writable<string> = writable($comData.icon);
+    let inviteOnly = $comData.inviteOnly;
+    let chatRequests = $comData.chatRequestsEnabled;
 
     let canUpload = true;
     let isUploading = false;
@@ -28,24 +28,24 @@
 
         const updatedData = {};
 
-        if ($joinedCommunity.communityId != communityId) {
-            updatedData['communityId'] = communityId;
+        if ($comData.communityId != id) {
+            updatedData['communityId'] = id;
         }
 
-        if ($joinedCommunity.name != name) {
+        if ($comData.name != name) {
             updatedData['name'] = name;
         }
 
-        if ($joinedCommunity.description != description) {
-            updatedData['description'] = description;
-        }
-
-        if ($joinedCommunity.icon != $icon) {
+        if ($comData.icon != $icon) {
             updatedData['icon'] = $icon;
         }
 
-        if ($joinedCommunity.inviteOnly != inviteOnly) {
+        if ($comData.inviteOnly != inviteOnly) {
             updatedData['inviteOnly'] = inviteOnly;
+        }
+
+        if ($comData.chatRequestsEnabled != chatRequests) {
+            updatedData['chatRequestsEnabled'] = chatRequests;
         }
 
         socket.emit(
@@ -55,18 +55,19 @@
                 if (err) {
                     errorMessage = err.msg;
                     isUploading = false;
+                    setProgressBar(false);
 
                     return;
                 }
 
                 // Redirect to new community
-                if ($joinedCommunity.communityId != communityId) {
-                    goto(`/community/${communityId}`, {
+                if ($comData.communityId != id) {
+                    goto(`/c/${id}`, {
                         replaceState: true,
                     });
                 }
 
-                $joinedCommunity = { ...$joinedCommunity, ...communityData };
+                $comData = { ...$comData, ...communityData };
 
                 dismissModal();
                 setProgressBar(false);
@@ -134,24 +135,16 @@
 
 <ModalTemplate {data}>
     {#if errorMessage}
-        <h1 id="error-header" in:fade={{ duration: 500 }}>
+        <h1 class="modal-error-header modal-header" in:fade={{ duration: 500 }}>
             {errorMessage}
         </h1>
     {/if}
 
-    <h1 id="input-header">Community ID</h1>
-    <input bind:value={communityId} maxlength={15} />
+    <h1 class="modal-header">Community ID</h1>
+    <input class="modal-input" bind:value={id} maxlength={15} />
 
-    <h1 id="input-header">Name</h1>
-    <input bind:value={name} maxlength={15} />
-
-    <h1 id="input-header">Description</h1>
-    <textarea
-        id="description-input"
-        bind:value={description}
-        maxlength={50}
-        rows={3}
-    />
+    <h1 class="modal-header">Name</h1>
+    <input class="modal-input" bind:value={name} maxlength={15} />
 
     <div>
         <img
@@ -160,17 +153,28 @@
             alt="New avatar"
             draggable={false}
         />
-        <h1 id="input-header" class="icon-info">Icon</h1>
+        <h1 class="modal-header icon-info">Icon</h1>
     </div>
 
-    <input maxlength={512} bind:value={$icon} />
+    <input class="modal-input" maxlength={512} bind:value={$icon} />
 
-    <div class="centered-container">
-        <h1 id="input-header">Invite only</h1>
+    <div class="modal-center">
+        <h1 class="modal-header">Invite only</h1>
         <Checkbox
             bind:checked={inviteOnly}
-            class="invite-only-checkbox"
-            size="2.7rem"
+            class="checkbox"
+            size="2.5rem"
+            primaryColor="var(--modal_checkbox_primary_color)"
+            secondaryColor="var(--modal_checkbox_secondary_color)"
+        />
+    </div>
+
+    <div class="modal-center">
+        <h1 class="modal-header">Chat requests</h1>
+        <Checkbox
+            bind:checked={chatRequests}
+            class="checkbox"
+            size="2.5rem"
             primaryColor="var(--modal_checkbox_primary_color)"
             secondaryColor="var(--modal_checkbox_secondary_color)"
         />
@@ -178,29 +182,10 @@
 </ModalTemplate>
 
 <style>
-    #error-header {
-        color: red;
-        font-size: 2rem;
-        margin: 0;
-        width: 100%;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
     div {
         display: flex;
         align-items: center;
         margin-bottom: 10px;
-    }
-
-    .centered-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    :global(div .invite-only-checkbox) {
-        margin-left: 20px;
     }
 
     div #icon-preview {
@@ -210,77 +195,10 @@
         margin-right: 10px;
     }
 
-    #input-header {
-        color: var(--profile_info_color);
-        margin: 0;
-        font-size: 2.2rem;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-
-    input,
-    textarea {
-        font-size: 2rem;
-        margin: 0 5px 20px 5px;
-        width: 100%;
-        background: var(--modal_input_bg_color);
-    }
-
-    textarea {
-        min-height: 100px;
-    }
-
-    #description-input {
-        font-size: 1.7rem;
-    }
-
-    @media screen and (max-width: 720px) {
-        #error-header {
-            font-size: 1.7rem;
-        }
-
+    @media screen and (max-width: 700px) {
         div #icon-preview {
             width: 48px;
             height: 48px;
-        }
-
-        :global(div .invite-only-checkbox) {
-            margin-left: 10px;
-            padding: 0;
-        }
-
-        #input-header {
-            font-size: 1.7rem;
-        }
-
-        input {
-            font-size: 1.7rem;
-        }
-
-        #description-input {
-            font-size: 1.5rem;
-        }
-    }
-
-    @media screen and (max-width: 520px) {
-        #error-header {
-            font-size: 1.4rem;
-        }
-
-        #input-header {
-            font-size: 1.4rem;
-        }
-
-        input {
-            font-size: 1.4rem;
-        }
-
-        #description-input {
-            font-size: 1.3rem;
         }
     }
 </style>

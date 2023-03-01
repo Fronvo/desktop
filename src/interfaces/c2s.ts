@@ -34,10 +34,6 @@ import type {
     FetchProfilePostsResult,
 } from './account/fetchProfilePosts';
 import type {
-    FindCommunitiesParams,
-    FindCommunitiesResult,
-} from './account/findCommunities';
-import type {
     FindProfilesParams,
     FindProfilesResult,
 } from './account/findProfiles';
@@ -111,6 +107,17 @@ import type {
     FetchHomePostsGuestParams,
     FetchHomePostsGuestResult,
 } from './noAccount/fetchHomePostsGuest';
+import type {
+    FetchProfileDataGuestParams,
+    FetchProfileDataGuestResult,
+} from './noAccount/fetchProfileDataGuest';
+import type { KickMemberParams, KickMemberResult } from './account/kickMember';
+import type { BanMemberParams, BanMemberResult } from './account/banMember';
+import type { ShowBannedMembersResult } from './account/showBannedMembers';
+import type {
+    UnbanMemberParams,
+    UnbanMemberResult,
+} from './account/unbanMember';
 
 export interface ClientToServerEvents {
     register: (
@@ -182,10 +189,6 @@ export interface ClientToServerEvents {
         {}: CreateCommunityParams,
         callback?: ({}: CreateCommunityResult) => void
     ) => void;
-    findCommunities: (
-        {}: FindCommunitiesParams,
-        callback?: ({}: FindCommunitiesResult) => void
-    ) => void;
     joinCommunity: (
         {}: JoinCommunityParams,
         callback?: ({}: JoinCommunityResult) => void
@@ -231,5 +234,24 @@ export interface ClientToServerEvents {
     fetchHomePostsGuest: (
         {}: FetchHomePostsGuestParams,
         callback?: ({}: FetchHomePostsGuestResult) => void
+    ) => void;
+    fetchProfileDataGuest: (
+        {}: FetchProfileDataGuestParams,
+        callback?: ({}: FetchProfileDataGuestResult) => void
+    ) => void;
+    kickMember: (
+        {}: KickMemberParams,
+        callback?: ({}: KickMemberResult) => void
+    ) => void;
+    banMember: (
+        {}: BanMemberParams,
+        callback?: ({}: BanMemberResult) => void
+    ) => void;
+    showBannedMembers: (
+        callback?: ({}: ShowBannedMembersResult) => void
+    ) => void;
+    unbanMember: (
+        {}: UnbanMemberParams,
+        callback?: ({}: UnbanMemberResult) => void
     ) => void;
 }

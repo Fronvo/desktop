@@ -36,12 +36,26 @@ interface ThemingOptions {
 
     // Highlighted profile info color
     profile_info_color: string;
+
+    // Target sizes
+    modal_header_size: string;
+    modal_header_size_700: string;
+    modal_input_size: string;
+    modal_input_size_700: string;
+    modal_button_size: string;
+    modal_button_size_700: string;
+
+    // Buttons
+    button_background: string;
+
+    // Seperators
+    seperator_background: string;
 }
 
 export const defaultTheme: ThemingOptions = {
     bg_color: 'rgb(30, 30, 30)',
 
-    text_color: 'rgb(180, 120, 255)',
+    text_color: 'rgb(175, 120, 255)',
 
     accent_bg_color: 'rgba(22, 22, 22, 50%)',
 
@@ -57,17 +71,28 @@ export const defaultTheme: ThemingOptions = {
 
     modal_input_bg_color: 'rgba(35, 35, 35, 0.5)',
 
-    modal_checkbox_primary_color: 'rgb(150, 100, 250)',
+    modal_checkbox_primary_color: 'white',
 
-    modal_checkbox_secondary_color: 'rgb(150, 100, 220)',
+    modal_checkbox_secondary_color: 'rgb(200, 200, 200)',
 
     profile_info_color: 'white',
+
+    modal_header_size: '1.65rem',
+    modal_header_size_700: '1.2rem',
+    modal_input_size: '1.6rem',
+    modal_input_size_700: '1.2rem',
+    modal_button_size: '1.4rem',
+    modal_button_size_700: '1rem',
+
+    button_background: 'rgb(35, 35, 35)',
+
+    seperator_background: 'rgb(40, 40, 40)',
 };
 
 export const whiteTheme: ThemingOptions = {
     bg_color: 'rgb(250, 250, 250)',
 
-    text_color: 'rgb(150, 100, 250)',
+    text_color: 'rgb(130, 70, 255)',
 
     accent_bg_color: 'rgb(255, 255, 255, 50%)',
 
@@ -83,11 +108,22 @@ export const whiteTheme: ThemingOptions = {
 
     modal_input_bg_color: 'rgb(240, 240, 240)',
 
-    modal_checkbox_primary_color: 'rgb(150, 100, 250)',
+    modal_checkbox_primary_color: 'var(--profile_info_color)',
 
-    modal_checkbox_secondary_color: 'rgb(150, 100, 220)',
+    modal_checkbox_secondary_color: 'rgb(90, 90, 90)',
 
     profile_info_color: 'rgb(40, 40, 40)',
+
+    modal_header_size: '1.65rem',
+    modal_header_size_700: '1.2rem',
+    modal_input_size: '1.6rem',
+    modal_input_size_700: '1.2rem',
+    modal_button_size: '1.4rem',
+    modal_button_size_700: '1rem',
+
+    button_background: 'rgb(240, 240, 240)',
+
+    seperator_background: 'rgb(240, 240, 240)',
 };
 
 export const currentTheme: Writable<ThemingOptions> = writable(defaultTheme);

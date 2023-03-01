@@ -1,19 +1,15 @@
 <script lang="ts">
     import MainSideNav from '$lib/app/main/MainSideNav.svelte';
     import Modal from '$lib/app/main/Modal.svelte';
-    import { currentPanelId, panels } from 'stores/main';
+    import { currentPanelId, panels } from 'stores/panels';
     import { onMount } from 'svelte';
-    import { getKey } from 'utilities/global';
     import Dropdown from './Dropdown.svelte';
-    import { xmasParticleOptions, xmasMode } from 'stores/all';
+    import { xmasParticleOptions, xmasMode } from 'stores/main';
     import ProgressBar from './ProgressBar.svelte';
 
     let ParticlesComponent: any;
 
     onMount(async () => {
-        // Get latest panel id / Home
-        $currentPanelId = getKey('panelId', 0);
-
         const module = await import('svelte-particles');
         ParticlesComponent = module.default;
     });
@@ -57,7 +53,7 @@
         justify-content: center;
     }
 
-    @media screen and (max-width: 520px) {
+    @media screen and (max-width: 700px) {
         .main-container {
             flex-direction: column;
         }

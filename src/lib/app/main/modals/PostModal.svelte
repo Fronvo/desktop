@@ -1,21 +1,27 @@
 <script lang="ts">
     import type { HomePost } from 'interfaces/all';
     import type { AccountPost, FronvoAccount } from 'interfaces/all';
-    import { dismissModal } from 'utilities/main';
     import {
-        currentPanelId,
-        loginSucceeded,
+        dismissDropdown,
+        dismissModal,
+        showDropdown,
+    } from 'utilities/main';
+    import Time from 'svelte-time';
+    import ModalTemplate from '../ModalTemplate.svelte';
+    import { ourData } from 'stores/profile';
+    import { loadTargetProfile } from 'utilities/profile';
+    import {
         postModalForHome,
         postModalInfo,
-    } from 'stores/main';
-    import { ourProfileData, userData } from 'stores/profile';
-    import Time from 'svelte-time';
-    import { onMount } from 'svelte';
-    import linkifyHtml from 'linkify-html';
-    import { DropdownTypes, PanelTypes, type ModalData } from 'types/main';
-    import ModalTemplate from '../ModalTemplate.svelte';
-    import { dataSaver } from 'stores/all';
-    import { loadProfilePanel } from 'utilities/profile';
+        type ModalData,
+    } from 'stores/modals';
+    import {
+        dropdownImage,
+        DropdownTypes,
+        dropdownVisible,
+    } from 'stores/dropdowns';
+    import { cachedAccountData, dataSaver } from 'stores/main';
+    import { currentPanelId, PanelTypes } from 'stores/panels';
 
     function getPostData(): AccountPost {
         if ($postModalForHome) {
@@ -24,52 +30,41 @@
         return $postModalInfo as AccountPost;
     }
 
-    function getUserData(): FronvoAccount {
+    function getPostProfile(): FronvoAccount {
         if ($postModalForHome) {
             return ($postModalInfo as HomePost).profileData;
         }
-        return $userData;
+
+        return $ourData;
     }
 
-    function generateContentLinks(postId: string, content: string): void {
-        setTimeout(() => {
-            const targetElement = document.getElementsByClassName(postId)[0];
+    function showImageDropdown(targetImage: string): void {
+        if ($dropdownVisible) {
+            dismissDropdown();
+            return;
+        }
 
-            if (!targetElement) return;
+        $dropdownImage = targetImage;
 
-            targetElement.innerHTML = linkifyHtml(content, {
-                className: 'link',
-                truncate: 40,
-                validate: {
-                    url: (value) =>
-                        /^https?:\/\/[0-9a-zA-Z-.\/\?=]+/.test(value),
-                },
-                target: '_blank',
-            });
-        }, 0);
+        showDropdown(DropdownTypes.Image);
     }
-
-    onMount(() => {
-        generateContentLinks(getPostData().postId, getPostData().content);
-    });
 
     const data: ModalData = {
-        titlePreSpan: getUserData().username,
-        titleIcon: getUserData().avatar || '/svgs/profile/avatar.svg',
-        titleListener: () => loadProfilePanel(getUserData().profileId),
+        titlePreSpan: getPostProfile().username,
+        titleIcon: getPostProfile().avatar || '/svgs/profile/avatar.svg',
+        titleListener: () =>
+            loadTargetProfile(getPostProfile().profileId, $cachedAccountData),
         titleListenerCondition: () => {
             // Only visit if not in profile panel, profile posts ARE IN THE SAME PROFILE
-            return $loginSucceeded && $currentPanelId != PanelTypes.Profile;
+            return $currentPanelId != PanelTypes.Profile;
         },
         title: '',
         titleDropdown: DropdownTypes.PostOptions,
         titleDropdownCondition: () => {
             // Only show post options if in the Profile Panel
-            // and if it's OUR POST
-            // TODO: Options in home for all users, save etc
             return (
                 $currentPanelId == PanelTypes.Profile &&
-                $userData.profileId == $ourProfileData.profileId
+                $currentPanelId == PanelTypes.Profile
             );
         },
 
@@ -81,13 +76,10 @@
         ],
 
         removeTransparency: true,
-        noSeperator: true,
     };
 </script>
 
 <ModalTemplate {data}>
-    <h1 id="title">{getPostData().title}</h1>
-
     <h1 id="content" class={getPostData().postId}>
         {getPostData().content}
     </h1>
@@ -96,8 +88,9 @@
         <img
             id="attachment"
             src={getPostData().attachment}
-            alt={`'${getPostData().title}' attachment`}
+            alt={'Post attachment'}
             draggable={false}
+            on:contextmenu={() => showImageDropdown(getPostData().attachment)}
         />
     {/if}
 
@@ -112,29 +105,14 @@
 </ModalTemplate>
 
 <style>
-    #title {
-        margin: 0;
-        text-align: center;
-        font-size: 2.4rem;
-    }
-
     #content {
         margin: 0;
-        font-size: 1.9rem;
+        font-size: 1.7rem;
         color: var(--profile_info_color);
         white-space: pre-wrap;
         text-align: center;
         margin-left: 20px;
         margin-right: 20px;
-    }
-
-    :global(#content .link) {
-        text-decoration: none;
-        color: var(--text_color);
-    }
-
-    :global(#content .link:hover::after) {
-        background: var(--profile_info_color);
     }
 
     #attachment {
@@ -151,7 +129,7 @@
     }
 
     #creation-date {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
         margin: 0;
         -webkit-touch-callout: none;
         -webkit-user-select: none;
@@ -161,31 +139,13 @@
         user-select: none;
     }
 
-    @media screen and (max-width: 720px) {
-        #title {
-            font-size: 2.2rem;
-        }
-
+    @media screen and (max-width: 700px) {
         #content {
-            font-size: 1.7rem;
+            font-size: 1.3rem;
         }
 
         #attachment {
             max-width: 100%;
-        }
-
-        #creation-date {
-            font-size: 1.2rem;
-        }
-    }
-
-    @media screen and (max-width: 520px) {
-        #title {
-            font-size: 1.8rem;
-        }
-
-        #content {
-            font-size: 1.4rem;
         }
 
         #creation-date {

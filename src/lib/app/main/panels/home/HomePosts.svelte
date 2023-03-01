@@ -1,54 +1,11 @@
 <script lang="ts">
-    import linkifyHtml from 'linkify-html';
-    import Saos from 'saos';
-    import { dataSaver, socket } from 'stores/all';
+    import LoadMore from '$lib/app/reusables/all/LoadMore.svelte';
+    import Post from '$lib/app/reusables/all/Post.svelte';
+    import { guestMode, socket } from 'stores/main';
     import { homePosts as homePostsStore, totalHomePosts } from 'stores/home';
-    import {
-        loginSucceeded,
-        postModalForHome,
-        postModalInfo,
-    } from 'stores/main';
-    import { onMount } from 'svelte';
-    import Time from 'svelte-time';
-    import { fade, scale } from 'svelte/transition';
-    import { ModalTypes } from 'types/main';
-    import { setProgressBar, showModal } from 'utilities/main';
+    import { setProgressBar } from 'utilities/main';
 
     let isLoadingMore = false;
-
-    onMount(() => {
-        setupContentLinks();
-    });
-
-    function setupContentLinks(): void {
-        $homePostsStore.forEach((homePost) => {
-            generateContentLinks(homePost.post.postId, homePost.post.content);
-        });
-    }
-
-    function generateContentLinks(postId: string, content: string): void {
-        setTimeout(() => {
-            const targetElement = document.getElementsByClassName(postId)[0];
-
-            if (!targetElement) return;
-
-            targetElement.innerHTML = linkifyHtml(content, {
-                className: 'link',
-                truncate: 40,
-                validate: {
-                    url: (value) =>
-                        /^https?:\/\/[0-9a-zA-Z-.\/\?=]+/.test(value),
-                },
-                target: '_blank',
-            });
-        }, 0);
-    }
-
-    function viewPost(postIndex: number): void {
-        $postModalInfo = $homePostsStore[postIndex];
-        $postModalForHome = true;
-        showModal(ModalTypes.ViewPost);
-    }
 
     function loadMore(): void {
         if (isLoadingMore) return;
@@ -57,7 +14,7 @@
         setProgressBar(true);
 
         socket.emit(
-            $loginSucceeded ? 'fetchHomePosts' : 'fetchHomePostsGuest',
+            $guestMode ? 'fetchHomePostsGuest' : 'fetchHomePosts',
             {
                 from: $homePostsStore.length.toString(),
                 to: ($homePostsStore.length + 15).toString(),
@@ -75,281 +32,24 @@
     }
 </script>
 
-<div class="posts-container" in:fade={{ duration: 300, delay: 200 }}>
-    {#each $homePostsStore as { post, profileData }, i}
-        <Saos
-            once
-            animation={'slide-top 0.5s cubic-bezier(0.230, 1.000, 0.320, 1.000) both'}
-        >
-            <div
-                on:click={() => viewPost(i)}
-                in:scale={{
-                    duration: 500,
-                    start: 0.8,
-                }}
-                class="post-container"
-            >
-                <div class="author-container">
-                    <img
-                        id="avatar"
-                        src={profileData.avatar && !$dataSaver
-                            ? profileData.avatar
-                            : '/svgs/profile/avatar.svg'}
-                        draggable={false}
-                        alt={`${profileData.username}'s avatar`}
-                    />
-                    <h1 id="author">{profileData.username}</h1>
-                </div>
+{#if $homePostsStore}
+    <div class="posts-container">
+        {#each $homePostsStore as { post, profileData }}
+            <Post {profileData} postData={post} hideOptions />
+        {/each}
 
-                <h1 id="title">{post.title}</h1>
-                <h1 id="content" class={post.postId}>{post.content}</h1>
-
-                {#if post.attachment && !$dataSaver}
-                    <img
-                        id="attachment"
-                        src={post.attachment}
-                        alt={`'${post.title}' attachment`}
-                        draggable={false}
-                    />
-                {/if}
-
-                <h1 id="creation-date">
-                    <Time
-                        relative
-                        format={'dddd HH:mm · MMMM D YYYY'}
-                        live={60000}
-                        timestamp={post.creationDate}
-                    />
-                </h1>
-            </div>
-        </Saos>
-    {/each}
-
-    {#if $homePostsStore.length < $totalHomePosts}
-        <button id="more" on:click={loadMore}>Load more</button>
-    {/if}
-</div>
+        {#if $homePostsStore.length < $totalHomePosts}
+            <LoadMore callback={loadMore} />
+        {/if}
+    </div>
+{/if}
 
 <style>
     .posts-container {
-        margin-top: 20px;
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
         align-items: center;
         justify-content: center;
-    }
-
-    .post-container {
-        display: flex;
-        flex-direction: column;
-        background: var(--accent_bg_color);
-        box-shadow: 0 0 10px var(--accent_shadow_color);
-        padding: 0px;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        margin-right: 10px;
-        margin-left: 10px;
-        margin-bottom: 50px;
-        width: 600px;
-        max-height: 650px;
-        border-radius: 10px;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        transition: 150ms;
-        cursor: pointer;
-        align-items: center;
-    }
-
-    .post-container:hover {
-        transform: scale(0.99);
-    }
-
-    .post-container:active {
-        transform: scale(0.975);
-    }
-
-    .author-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 10px;
-    }
-
-    .author-container #avatar {
-        width: 64px;
-        height: 64px;
-        border-radius: 10px;
-        margin-right: 10px;
-    }
-
-    .author-container #author {
-        color: var(--profile_info_color);
-        font-size: 2.5rem;
-        margin: 0;
-    }
-
-    .post-container #title {
-        display: -webkit-box;
-        overflow: hidden;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        margin: 0;
-        text-align: center;
-        font-size: 2.1rem;
-        width: 100%;
-        margin-right: 5px;
-        margin-left: 5px;
-    }
-
-    .post-container #content {
-        display: -webkit-box;
-        overflow: hidden;
-        max-width: 100%;
-        -webkit-line-clamp: 5;
-        -webkit-box-orient: vertical;
-        margin: 0;
-        margin-top: 10px;
-        margin-right: 5px;
-        margin-left: 5px;
-        font-size: 1.8rem;
-        color: var(--profile_info_color);
-        flex: 1;
-        white-space: pre-wrap;
-        text-align: center;
-    }
-
-    :global(.post-container #content .link) {
-        text-decoration: none;
-        color: var(--text_color);
-    }
-
-    :global(.post-container #content .link:hover::after) {
-        background: var(--profile_info_color);
-    }
-
-    .post-container #attachment {
-        max-width: 100%;
-        max-height: 275px;
-        margin-top: 10px;
-    }
-
-    .post-container #creation-date {
-        font-size: 1.3rem;
-        margin: 0;
-        margin-top: 20px;
-    }
-
-    .posts-container #more {
-        width: max-content;
-        margin: auto;
-        font-size: 2rem;
-        margin-bottom: 20px;
-        margin-top: 20px;
-    }
-
-    @media screen and (max-width: 720px) {
-        .post-container {
-            max-width: 400px;
-            max-height: 500px;
-            cursor: default;
-        }
-
-        .post-container:hover {
-            transform: none;
-        }
-
-        .post-container:active {
-            transform: none;
-        }
-
-        .author-container {
-            margin-bottom: 5px;
-        }
-
-        .author-container #avatar {
-            width: 64px;
-            height: 64px;
-        }
-
-        .author-container #author {
-            font-size: 2.2rem;
-        }
-
-        .post-container #title {
-            font-size: 1.7rem;
-        }
-
-        .post-container #content {
-            font-size: 1.4rem;
-            -webkit-line-clamp: 4;
-        }
-
-        .post-container #attachment {
-            max-height: 225px;
-        }
-
-        .post-container #creation-date {
-            font-size: 1.2rem;
-        }
-
-        .posts-container #more {
-            font-size: 1.8rem;
-        }
-    }
-
-    @media screen and (max-width: 520px) {
-        .post-container {
-            max-width: 300px;
-            max-height: 450px;
-            margin-bottom: 25px;
-        }
-
-        .author-container #avatar {
-            width: 48px;
-            height: 48px;
-        }
-
-        .author-container #author {
-            font-size: 1.9rem;
-        }
-
-        .post-container #title {
-            font-size: 1.5rem;
-        }
-
-        .post-container #content {
-            font-size: 1.2rem;
-            -webkit-line-clamp: 3;
-        }
-
-        .post-container #attachment {
-            max-height: 200px;
-        }
-
-        .post-container #creation-date {
-            font-size: 1.1rem;
-        }
-
-        .posts-container #more {
-            font-size: 1.4rem;
-        }
-    }
-
-    /* For SAOS, animation on scroll */
-    @keyframes -global-slide-top {
-        0% {
-            opacity: 0.5;
-            transform: translateY(25px);
-        }
-
-        100% {
-            opacity: 1;
-            transform: translateY(0);
-        }
     }
 </style>

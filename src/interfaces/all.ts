@@ -18,7 +18,6 @@ export interface FronvoError {
 export interface AccountPost {
     postId: string;
     author: string;
-    title: string;
     content: string;
     attachment?: string;
     creationDate: string;
@@ -53,11 +52,11 @@ export interface Community {
     communityId: string;
     ownerId: string;
     name: string;
-    description: string;
     creationDate: string;
     icon?: string;
     members: string[];
     inviteOnly: boolean;
+    chatRequestsEnabled: boolean;
     acceptedChatRequests: string[];
     totalMessages: number;
 }
@@ -68,7 +67,7 @@ export interface CommunityMessage {
     content: string;
     creationDate: string;
     isReply: boolean;
-    replyId: string;
+    replyContent: string;
 }
 
 export interface CommunityMessageFinal extends CommunityMessage {
