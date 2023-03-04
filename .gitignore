@@ -9,7 +9,9 @@ node_modules/
 /package
 *.local
 .env.*
-build/
+output/*
+build/*
+!build/icons/
 dist/
 .env
 .vercel/

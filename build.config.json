@@ -8,8 +8,15 @@
         "src/electron.cjs",
         "src/preload.cjs",
         {
-            "from": "build",
+            "from": "output",
             "to": ""
         }
-    ]
+    ],
+    "compression": "store",
+    "linux": {
+        "target": "deb",
+        "artifactName": "fronvo.deb",
+        "maintainer": "Shadofer",
+        "category": "Internet"
+    }
 }

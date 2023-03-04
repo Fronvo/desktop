@@ -11,6 +11,10 @@
 
     export let profileData: FronvoAccount;
     export let dropdown: DropdownTypes = undefined;
+
+    export let isJoinRequest = false;
+    export let joinRequestEmail = '';
+
     export let preDropdownCallback = () => {};
 
     function decideFollowOutput(followInfo: string[]): string {
@@ -47,7 +51,10 @@
     }
 </script>
 
-<div on:click={(dropdown && callDropdown) || viewProfile}>
+<div
+    class={isJoinRequest ? 'join' : ''}
+    on:click={(dropdown && callDropdown) || viewProfile}
+>
     <img
         id="avatar"
         src={profileData.avatar && !$dataSaver
@@ -57,15 +64,20 @@
         draggable={false}
     />
 
-    <h1 id="username">{profileData.username}</h1>
-    <h1 id="profileId">@{profileData.profileId}</h1>
+    <h1 id="username">
+        {!isJoinRequest ? profileData?.username : `${joinRequestEmail}***`}
+    </h1>
 
-    <h1 id="following">
-        <span>{decideFollowOutput(profileData.following)}</span> following
-    </h1>
-    <h1 id="followers">
-        <span>{decideFollowOutput(profileData.followers)}</span> followers
-    </h1>
+    {#if !isJoinRequest}
+        <h1 id="profileId">@{profileData.profileId}</h1>
+
+        <h1 id="following">
+            <span>{decideFollowOutput(profileData.following)}</span> following
+        </h1>
+        <h1 id="followers">
+            <span>{decideFollowOutput(profileData.followers)}</span> followers
+        </h1>
+    {/if}
 </div>
 
 <style>
@@ -110,6 +122,10 @@
         color: var(--profile_info_color);
     }
 
+    .join #username {
+        -webkit-line-clamp: 3;
+    }
+
     div #profileId {
         display: -webkit-box;
         overflow: hidden;
@@ -135,15 +151,15 @@
         border-radius: 10px;
     }
 
-    @media screen and (max-width: 1100px) {
+    @media screen and (max-width: 700px) {
         div {
             width: 300px;
-            height: 100px;
+            height: 65px;
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: start;
-            padding: 5px;
+            padding: 0;
             margin: 0;
             cursor: default;
             margin-top: 5px;
@@ -158,8 +174,12 @@
             display: none;
         }
 
+        .join #username {
+            display: initial;
+        }
+
         div #profileId {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
         }
 
         div #following,
@@ -171,17 +191,6 @@
             width: 48px;
             height: 48px;
             margin-right: 5px;
-        }
-    }
-
-    @media screen and (max-width: 700px) {
-        div {
-            height: 65px;
-            padding: 0;
-        }
-
-        div #profileId {
-            font-size: 1.2rem;
         }
     }
 </style>
