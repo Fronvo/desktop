@@ -1,11 +1,13 @@
 <script lang="ts">
     import MainSideNav from '$lib/app/main/MainSideNav.svelte';
     import Modal from '$lib/app/main/Modal.svelte';
-    import { currentPanelId, panels } from 'stores/panels';
+    import { currentPanelId, panels, PanelTypes } from 'stores/panels';
     import { onMount } from 'svelte';
     import Dropdown from './Dropdown.svelte';
     import { xmasParticleOptions, xmasMode } from 'stores/main';
     import ProgressBar from './ProgressBar.svelte';
+    import CommunityMembers from './panels/community/CommunityMembers.svelte';
+    import { memberListVisible } from 'stores/community';
 
     let ParticlesComponent: any;
 
@@ -40,27 +42,27 @@
         <!-- Reactive panel switching -->
         <svelte:component this={panels[$currentPanelId]} />
     </div>
+
+    {#if $currentPanelId == PanelTypes.Community && $memberListVisible}
+        <CommunityMembers />
+    {/if}
 </div>
 
 <style>
     .main-container {
         display: flex;
         flex-direction: row;
+        justify-content: start;
     }
 
     #content {
-        width: 75%;
-        margin: auto;
-        justify-content: center;
+        width: 100%;
+        justify-content: start;
     }
 
-    @media screen and (max-width: 700px) {
+    @media screen and (max-width: 850px) {
         .main-container {
-            flex-direction: column;
-        }
-
-        #content {
-            width: 100%;
+            flex-direction: column-reverse;
         }
     }
 </style>

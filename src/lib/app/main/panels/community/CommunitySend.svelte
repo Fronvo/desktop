@@ -1,14 +1,14 @@
 <script lang="ts">
     import Abort from '$lib/svgs/Abort.svelte';
     import {
+        communityData,
         replyingTo,
         replyingToId,
         sendContent,
-        targetSendHeight,
     } from 'stores/community';
     import { onDestroy, onMount } from 'svelte';
     import type { Unsubscriber } from 'svelte/store';
-    import { fade } from 'svelte/transition';
+    import { slide } from 'svelte/transition';
 
     let unsubscribe: Unsubscriber;
 
@@ -18,34 +18,14 @@
     }
 
     onMount(() => {
-        unsubscribe = sendContent.subscribe((newContent) => {
-            // Multiline textarea should have adjustable height
-            const contentInput = document.getElementById('textarea-content');
+        unsubscribe = sendContent.subscribe(() => {
+            const el = document.getElementById(
+                'textarea-content'
+            ) as HTMLTextAreaElement;
 
-            let targetHeight: number;
+            el.style.height = '0px';
 
-            // For empty text
-            if (
-                !newContent ||
-                (newContent.length < 40 && newContent.indexOf('\n') == -1)
-            ) {
-                targetHeight = 50;
-            } else {
-                targetHeight = Math.min(
-                    contentInput.scrollHeight,
-                    $replyingTo ? 350 : 300
-                );
-            }
-
-            // Also add margin for the messages to be visible
-            contentInput.style.height = `${targetHeight}px`;
-
-            // Share the value
-            $targetSendHeight = targetHeight;
-
-            setTimeout(() => {
-                window.scrollTo(0, document.body.scrollHeight);
-            }, 0);
+            el.style.height = Math.min(el.scrollHeight, 400) + 'px';
         });
     });
 
@@ -54,25 +34,45 @@
     });
 </script>
 
-<div id="blur" class="send-container" in:fade={{ duration: 200 }}>
+<div class="send-container">
     {#if $replyingTo}
-        <div class="reply-container" in:fade={{ duration: 300 }}>
-            <Abort callback={abortReply} />
+        <div class="reply-container" in:slide={{ duration: 300 }}>
             <h1 id="reply-name">Replying to <span>{$replyingTo}</span></h1>
+            <Abort callback={abortReply} />
         </div>
+
+        <hr />
     {/if}
 
-    <textarea id="textarea-content" bind:value={$sendContent} maxlength={500} />
+    <textarea
+        placeholder={`Send to ${$communityData?.name}`}
+        id="textarea-content"
+        bind:value={$sendContent}
+        maxlength={500}
+    />
 </div>
 
 <style>
+    hr {
+        width: 100%;
+        height: 1px;
+        margin: 0;
+        border-color: var(--seperator_background);
+    }
+
     .send-container {
-        width: 40%;
-        min-width: 600px;
-        box-shadow: 0 0 5px var(--accent_shadow_color);
-        position: fixed;
+        width: 100%;
+        background: var(--bg_color);
+        position: sticky;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-bottom: 25px;
+        padding-top: 10px;
+        right: 0;
+        left: 0;
         bottom: 0;
         display: flex;
+        margin: auto;
         flex-direction: column;
         justify-content: center;
         -webkit-touch-callout: none;
@@ -85,35 +85,39 @@
 
     .send-container textarea {
         background: var(--accent_bg_color);
-        font-size: 1.5rem;
+        font-size: 1.4rem;
         color: var(--profile_info_color);
-        overflow: auto;
+        border-radius: 10px;
+        min-height: 40px;
+        max-height: 400px;
+        transition: none;
     }
 
     .reply-container {
-        background: var(--accent_bg_color);
+        border-top: 0 0 5px var(--accent_bg_color);
         display: flex;
         align-items: center;
-        transition: 300ms background;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
     }
 
     .reply-container #reply-name {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         margin: 0;
         padding: 5px;
+        flex: 1;
     }
 
     .reply-container #reply-name span {
         color: var(--profile_info_color);
     }
 
-    @media screen and (max-width: 700px) {
+    @media screen and (max-width: 850px) {
         .send-container {
-            bottom: 65px;
-            width: 100%;
-            min-width: initial;
-            min-height: 55px;
-            backdrop-filter: none;
+            bottom: 0px;
+            min-width: none;
+            min-height: 100px;
+            padding-bottom: 70px;
         }
 
         .send-container textarea {

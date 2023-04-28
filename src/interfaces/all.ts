@@ -2,6 +2,8 @@
 // Interfaces for all kinds of files.
 // ******************** //
 
+import type { SvelteComponent } from 'svelte';
+
 export interface FronvoError {
     err: {
         msg: string;
@@ -46,6 +48,8 @@ export interface FronvoAccount {
     isAdmin: boolean;
     isDisabled: boolean;
     totalPosts: number;
+    online: boolean;
+    lastOnline: string;
 }
 
 export interface Community {
@@ -78,6 +82,9 @@ export interface FronvoContainer {
     svg: string;
 }
 
-export interface JoinRequest {
-    email: string;
+export interface MainSideItem {
+    title: string;
+    action: () => void;
+    svg: typeof SvelteComponent;
+    hideOnReveal?: boolean;
 }

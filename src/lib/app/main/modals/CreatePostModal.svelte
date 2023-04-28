@@ -7,14 +7,12 @@
     import { ourData, searchData } from 'stores/profile';
     import { onMount } from 'svelte';
     import { writable, type Writable } from 'svelte/store';
-    import { fade } from 'svelte/transition';
     import { dismissModal, setProgressBar } from 'utilities/main';
     import { loadTargetProfile } from 'utilities/profile';
     import ModalTemplate from '../ModalTemplate.svelte';
 
     let isSharing = false;
     let canShare = true;
-    let errorMessage: string;
 
     const postData: Writable<AccountPost> = writable({
         author: $ourData.profileId,
@@ -39,7 +37,6 @@
             },
             async ({ err }) => {
                 if (err) {
-                    errorMessage = err.msg;
                     isSharing = false;
                     setProgressBar(false);
 
@@ -66,38 +63,21 @@
         attachmentPreview.onerror = () => {
             if ($postData.attachment == '') return;
 
-            const attachmentText =
-                document.getElementsByClassName('attachment-info')[0];
-
-            attachmentText.textContent = 'Attachment - Invalid URL';
-
             canShare = false;
-            attachmentPreview.src = '/svgs/profile/avatar.svg';
         };
 
         postData.subscribe(({ attachment }) => {
             if (attachment == undefined) return;
 
-            const attachmentText =
-                document.getElementsByClassName('attachment-info')[0];
-
             // Allow empty avatar url, reset it
             if (attachment == '') {
-                // Reset state
-                attachmentText.textContent = 'Attachment';
-
                 canShare = true;
             }
 
             // Check for avatar https, perform some client side validation on our own
             else if (!attachment.match(/^(https:\/\/).+$/)) {
-                attachmentText.textContent = 'Attachment - Invalid URL';
-
                 canShare = false;
             } else if (!canShare) {
-                // Reset state
-                attachmentText.textContent = 'Attachment';
-
                 canShare = true;
             }
         });
@@ -117,17 +97,11 @@
             },
         ],
 
-        removeTransparency: true,
+        useSecondaryHr: true,
     };
 </script>
 
 <ModalTemplate {data}>
-    {#if errorMessage}
-        <h1 class="modal-error-header modal-header" in:fade={{ duration: 500 }}>
-            {errorMessage}
-        </h1>
-    {/if}
-
     <Post
         profileData={$ourData}
         bind:postData={$postData}
@@ -142,8 +116,9 @@
         alt="Post attachment"
         draggable={false}
     />
-    <h1 class="modal-header attachment-info">Attachment</h1>
+
     <input
+        placeholder="Attachment URL"
         class="modal-input"
         bind:value={$postData.attachment}
         maxlength={256}

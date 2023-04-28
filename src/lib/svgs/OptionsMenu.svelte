@@ -25,10 +25,10 @@
         background: var(--accent_bg_color);
     }
 
-    @media screen and (max-width: 700px) {
+    @media screen and (max-width: 850px) {
         svg {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
         }
     }
 </style>

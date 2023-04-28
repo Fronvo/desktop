@@ -1,38 +1,44 @@
 <script lang="ts">
-    import Expand from '$lib/svgs/Expand.svelte';
-    import { communityData } from 'stores/community';
-    import { DropdownTypes, dropdownVisible } from 'stores/dropdowns';
+    import Bans from '$lib/svgs/Bans.svelte';
+    import Edit from '$lib/svgs/Edit.svelte';
+    import Leave from '$lib/svgs/Leave.svelte';
+    import Members from '$lib/svgs/Members.svelte';
+    import { communityData, memberListVisible } from 'stores/community';
     import { dataSaver } from 'stores/main';
-    import { fade } from 'svelte/transition';
-    import { dismissDropdown, showDropdown } from 'utilities/main';
+    import { ModalTypes } from 'stores/modals';
+    import { ourData } from 'stores/profile';
+    import { showModal } from 'utilities/main';
 
-    function showCommunityInfoDropdown(): void {
-        if ($dropdownVisible) {
-            dismissDropdown();
+    function toggleMembers() {
+        if (document.body.clientWidth < 850) {
+            showModal(ModalTypes.CommunityMembers);
         } else {
-            showDropdown(DropdownTypes.CommunityOptions);
+            $memberListVisible = !$memberListVisible;
         }
     }
 </script>
 
 {#if $communityData}
-    <div
-        id="blur"
-        class="info-container"
-        in:fade={{ duration: 200 }}
-        on:click={showCommunityInfoDropdown}
-    >
-        <img
-            id="icon"
-            src={$communityData.icon && !$dataSaver
-                ? $communityData.icon
-                : '/svgs/profile/avatar.svg'}
-            alt={`${$communityData?.name}'s' icon`}
-            draggable={false}
-        />
-        <h1 id="name">{$communityData?.name}</h1>
+    <div class="info-container">
+        <div class="data-container">
+            <img
+                id="icon"
+                src={$communityData.icon && !$dataSaver
+                    ? $communityData.icon
+                    : '/svgs/profile/avatar.svg'}
+                alt={`${$communityData?.name}'s' icon`}
+                draggable={false}
+            />
+            <h1 id="name">{$communityData?.name}</h1>
+        </div>
 
-        <Expand />
+        {#if $communityData.ownerId == $ourData.profileId}
+            <Edit callback={() => showModal(ModalTypes.EditCommunity)} />
+            <Bans callback={() => showModal(ModalTypes.ShowBans)} />
+        {/if}
+
+        <Members callback={toggleMembers} />
+        <Leave callback={() => showModal(ModalTypes.LeaveCommunity)} />
     </div>
 {/if}
 
@@ -41,38 +47,44 @@
         position: sticky;
         top: 0;
         display: flex;
+        margin: auto;
+        padding: 5px;
+        z-index: 1;
+        background: var(--side_bg_color);
+        border-bottom: 1px solid var(--accent_shadow_color);
+        box-shadow: 0 0 5px var(--accent_shadow_color);
+        transition: 150ms;
+        width: 100%;
         justify-content: center;
         align-items: center;
-        margin: auto;
+    }
+
+    .data-container {
+        display: flex;
+        align-items: center;
         padding: 10px;
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
-        z-index: 1;
-        background: var(--accent_bg_color);
         transition: 150ms;
-        cursor: pointer;
+        border-radius: 10px;
+        flex: 1;
     }
 
-    .info-container:hover {
-        box-shadow: 0 0 15px var(--accent_shadow_color);
-    }
-
-    .info-container #icon {
-        width: 55px;
-        height: 55px;
-        margin-right: 5px;
+    #icon {
+        width: 44px;
+        height: 44px;
+        margin-right: 10px;
         -webkit-touch-callout: none;
         -webkit-user-select: none;
         -khtml-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
-        border-radius: 5px;
+        border-radius: 20px;
     }
 
-    .info-container #name {
+    #name {
         margin: 0;
-        font-size: 2.2rem;
+        font-size: 1.6rem;
+        letter-spacing: 0.5px;
         color: var(--profile_info_color);
         -webkit-touch-callout: none;
         -webkit-user-select: none;
@@ -87,18 +99,18 @@
         -webkit-box-orient: vertical;
     }
 
-    @media screen and (max-width: 700px) {
-        .info-container {
+    @media screen and (max-width: 850px) {
+        .data-container {
             cursor: default;
         }
 
-        .info-container #icon {
+        #icon {
             width: 36px;
             height: 36px;
         }
 
-        .info-container #name {
-            font-size: 1.5rem;
+        #name {
+            font-size: 1.3rem;
         }
     }
 </style>

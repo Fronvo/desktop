@@ -3,12 +3,12 @@
     import { dismissModal, setProgressBar } from 'utilities/main';
     import { onMount } from 'svelte';
     import { writable, type Writable } from 'svelte/store';
-    import { fade } from 'svelte/transition';
     import Checkbox from 'svelte-checkbox';
     import ModalTemplate from '../ModalTemplate.svelte';
     import { communityData as comData } from 'stores/community';
     import { socket } from 'stores/main';
     import type { ModalData } from 'stores/modals';
+    import ErrorHeader from '$lib/app/reusables/all/ErrorHeader.svelte';
 
     let id = $comData.communityId;
     let name = $comData.name;
@@ -77,10 +77,6 @@
         ) as HTMLImageElement;
 
         iconPreview.onerror = () => {
-            const iconText = document.getElementsByClassName('icon-info')[0];
-
-            iconText.textContent = 'Icon - Invalid URL';
-
             canUpload = false;
             iconPreview.src = '/svgs/profile/avatar.svg';
         };
@@ -88,25 +84,15 @@
         icon.subscribe((newIcon) => {
             if (newIcon == undefined) return;
 
-            const iconText = document.getElementsByClassName('icon-info')[0];
-
             // Allow empty avatar url, reset it
             if (newIcon == '') {
-                // Reset state
-                iconText.textContent = 'Icon';
-
                 canUpload = true;
             }
 
             // Check for avatar https, perform some client side validation on our own
             else if (!newIcon.match(/^(https:\/\/).+$/)) {
-                iconText.textContent = 'Icon - Invalid URL';
-
                 canUpload = false;
             } else if (!canUpload) {
-                // Reset state
-                iconText.textContent = 'Icon';
-
                 canUpload = true;
             }
         });
@@ -125,15 +111,13 @@
                 callback: dismissModal,
             },
         ],
+
+        useSecondaryHr: true,
     };
 </script>
 
 <ModalTemplate {data}>
-    {#if errorMessage}
-        <h1 class="modal-error-header modal-header" in:fade={{ duration: 500 }}>
-            {errorMessage}
-        </h1>
-    {/if}
+    <ErrorHeader {errorMessage} />
 
     <h1 class="modal-header">Community ID</h1>
     <input class="modal-input" bind:value={id} maxlength={15} />
@@ -148,7 +132,6 @@
             alt="New avatar"
             draggable={false}
         />
-        <h1 class="modal-header icon-info">Icon</h1>
     </div>
 
     <input class="modal-input" maxlength={512} bind:value={$icon} />
@@ -173,16 +156,16 @@
     }
 
     div #icon-preview {
-        width: 64px;
-        height: 64px;
+        width: 48px;
+        height: 48px;
         border-radius: 10px;
         margin-right: 10px;
     }
 
-    @media screen and (max-width: 700px) {
+    @media screen and (max-width: 850px) {
         div #icon-preview {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
         }
     }
 </style>

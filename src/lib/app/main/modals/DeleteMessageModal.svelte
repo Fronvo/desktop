@@ -33,14 +33,14 @@
             },
         ],
 
-        removeTransparency: true,
+        useSecondaryHr: true,
     };
 </script>
 
 <ModalTemplate {data}>
     <Message
         messageData={$targetMessageModal}
-        messageProfileData={$targetMessageModalProfile}
+        profileData={$targetMessageModalProfile}
         hideOptions
         isPreview
     />

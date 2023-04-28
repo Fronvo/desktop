@@ -7,11 +7,10 @@
         replyingToId,
         sendContent,
         communityMessages as messages,
-        targetSendHeight,
     } from 'stores/community';
     import { onDestroy, onMount } from 'svelte';
     import type { Unsubscriber } from 'svelte/store';
-    import { scale } from 'svelte/transition';
+    import { slide } from 'svelte/transition';
     import {
         dismissModal,
         getTimeDifferenceM,
@@ -34,11 +33,39 @@
     import { loadOurProfile } from 'utilities/profile';
     import { PanelTypes } from 'stores/panels';
     import MessageSmall from '$lib/app/reusables/communities/MessageSmall.svelte';
+    import InfiniteLoading from 'svelte-infinite-loading';
+    import Time from 'svelte-time/src/Time.svelte';
+    import { getDay, isSameDay } from 'date-fns';
 
     let unsubscribe: Unsubscriber;
-    let unsubscribe2: Unsubscriber;
 
     let animationsEnabled = true;
+
+    async function loadMore({ detail: { loaded, complete } }): Promise<void> {
+        if (animationsEnabled) {
+            loaded();
+            return;
+        }
+
+        socket.emit(
+            'fetchCommunityMessages',
+            {
+                from: $messages.length.toString(),
+                to: ($messages.length + 30).toString(),
+            },
+            ({ communityMessages }) => {
+                if (communityMessages.length == 0) {
+                    complete();
+                    return;
+                }
+
+                $messages.push(...communityMessages.reverse());
+                $messages = $messages;
+
+                loaded();
+            }
+        );
+    }
 
     async function addMessageLinks(): Promise<void> {
         if ($messages.length == 0) return;
@@ -108,6 +135,10 @@
                 replyId: $replyingToId,
             },
             () => {
+                // Reset reply info
+                $replyingTo = undefined;
+                $replyingToId = undefined;
+
                 $sendContent = '';
 
                 const contentInput = document.getElementById(
@@ -120,10 +151,6 @@
                 }, 0);
             }
         );
-
-        // Reset reply info
-        $replyingTo = undefined;
-        $replyingToId = undefined;
     }
 
     function deleteMessage(
@@ -159,14 +186,9 @@
         socket.off('newCommunityMessage');
 
         socket.on('newCommunityMessage', ({ newMessageData }) => {
-            $messages.push(newMessageData);
-            $messages = $messages;
+            $messages = [newMessageData].concat($messages);
 
             addMessageLinks();
-
-            setTimeout(() => {
-                window.scrollTo(0, document.body.scrollHeight);
-            }, 0);
         });
     }
 
@@ -243,10 +265,10 @@
 
             if (!chatRequestState) {
                 contentInput.disabled = true;
-                contentInput.value = 'Chat request pending';
+                contentInput.placeholder = 'Chat request pending';
             } else {
                 contentInput.disabled = false;
-                contentInput.value = '';
+                contentInput.placeholder = `Send to ${$communityData?.name}`;
                 $sendContent = '';
             }
 
@@ -328,7 +350,7 @@
             ) as HTMLTextAreaElement;
 
             contentInput.disabled = true;
-            contentInput.value = 'Chat request pending';
+            contentInput.placeholder = 'Chat request pending';
         }
     }
 
@@ -341,28 +363,9 @@
         attachCommunityDeletedListener();
         attachMemberChangeListener();
 
-        // Adjustable margin
-        unsubscribe = targetSendHeight.subscribe((newHeight) => {
-            const chatContainer = document.getElementsByClassName(
-                'chat-container'
-            )[0] as HTMLDivElement;
-
-            chatContainer.style.marginBottom = `${
-                $replyingTo ? newHeight + 50 : newHeight
-            }px`;
-        });
-
-        unsubscribe2 = messages.subscribe(() => {
+        unsubscribe = messages.subscribe(() => {
             addMessageLinks();
-
-            setTimeout(() => {
-                window.scrollTo(0, document.body.scrollHeight);
-            }, 50);
         });
-
-        setTimeout(() => {
-            window.scrollTo(0, document.body.scrollHeight);
-        }, 25);
 
         // Efficient send
         document.addEventListener('keydown', keyDownListener);
@@ -376,27 +379,25 @@
 
     onDestroy(() => {
         unsubscribe();
-        unsubscribe2();
 
         document.removeEventListener('keydown', keyDownListener);
 
         // Limit load after reloading the community panel
-        $messages = $messages.slice(-40);
+        $messages = $messages.slice(0, 40);
     });
 </script>
 
 {#if $messages}
     <div class="chat-container">
         {#if $messages.length == 0}
-            <h1 id="chat-start" in:scale={{ duration: 500, start: 0.95 }}>
+            <h1 id="chat-start" in:slide={{ duration: 500 }}>
                 Welcome to {$communityData?.name}'s chat room!
             </h1>
         {:else if $messages}
             {#each $messages as { message, profileData }, i}
-                <!-- Same author, less than 30 minutes ago -->
-                {#if $messages[i - 1]?.message.ownerId == profileData.profileId && getTimeDifferenceM(new Date(message.creationDate), new Date($messages[i - 1]?.message.creationDate)) < 30}
+                <!-- Same author, less than 15 minutes ago -->
+                {#if $messages[i - 1]?.message.ownerId == profileData.profileId && getTimeDifferenceM(new Date(message.creationDate), new Date($messages[i - 1]?.message.creationDate)) < 15}
                     <MessageSmall
-                        messageProfileData={profileData}
                         messageData={message}
                         replyCondition={$chatRequestAccepted ||
                             !$communityData?.chatRequestsEnabled}
@@ -410,7 +411,7 @@
                     />
                 {:else}
                     <Message
-                        messageProfileData={profileData}
+                        {profileData}
                         messageData={message}
                         replyCondition={$chatRequestAccepted ||
                             !$communityData?.chatRequestsEnabled}
@@ -423,7 +424,31 @@
                         animate={animationsEnabled}
                     />
                 {/if}
+
+                <!-- Any author, after 15 minutes -->
+                {#if getTimeDifferenceM(new Date(message.creationDate), new Date($messages[i - 1]?.message.creationDate)) >= 15}
+                    <h1 id="time-seperator">
+                        <hr />
+                        <Time
+                            timestamp={message.creationDate}
+                            format={'MMMM D, HH:mm'}
+                        />
+                        <hr />
+                    </h1>
+                {/if}
             {/each}
+
+            {#if $communityData?.totalMessages > $messages?.length}
+                <InfiniteLoading
+                    on:infinite={loadMore}
+                    forceUseInfiniteWrapper
+                    distance={1000}
+                >
+                    <div slot="noMore" />
+                    <div slot="noResults" />
+                    <div slot="error" />
+                </InfiniteLoading>
+            {/if}
         {/if}
     </div>
 {/if}
@@ -441,15 +466,46 @@
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
-        font-size: 2rem;
-        margin-bottom: 20px;
         text-align: center;
-        width: 100%;
+        font-size: 1.4rem;
+        overflow: hidden;
+        color: var(--profile_info_color);
+    }
+
+    .chat-container #time-seperator {
+        display: flex;
+        margin: 0;
+        margin-top: 25px;
+        margin-bottom: 25px;
+        font-size: 1rem;
+        text-align: center;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    hr {
+        width: 40%;
+        height: 1px;
+        border: 1px solid var(--seperator_background);
     }
 
     @media screen and (max-width: 700px) {
         .chat-container #chat-start {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .chat-container #time-seperator {
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        hr {
+            width: 35%;
+            margin-left: 10px;
         }
     }
 </style>

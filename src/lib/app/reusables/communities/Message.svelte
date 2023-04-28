@@ -2,19 +2,13 @@
     import DeleteChatOption from '$lib/svgs/DeleteChatOption.svelte';
     import Reply from '$lib/svgs/Reply.svelte';
     import type { CommunityMessage, FronvoAccount } from 'interfaces/all';
-    import Time from 'svelte-time/src/Time.svelte';
     import { fade } from 'svelte/transition';
-    import { dismissDropdown, showDropdown } from 'utilities/main';
     import linkifyHtml from 'linkify-html';
     import { loadTargetProfile } from 'utilities/profile';
-    import {
-        dropdownImage,
-        DropdownTypes,
-        dropdownVisible,
-    } from 'stores/dropdowns';
     import { cachedAccountData, dataSaver } from 'stores/main';
+    import { ourData } from 'stores/profile';
 
-    export let messageProfileData: FronvoAccount;
+    export let profileData: FronvoAccount;
     export let messageData: CommunityMessage;
     export let hideOptions = false;
     export let replyCondition = true;
@@ -23,17 +17,6 @@
     export let deleteCallback = () => {};
     export let isPreview = false;
     export let animate = true;
-
-    function showImageDropdown(targetImage: string): void {
-        if ($dropdownVisible) {
-            dismissDropdown();
-            return;
-        }
-
-        $dropdownImage = targetImage;
-
-        showDropdown(DropdownTypes.Image);
-    }
 
     function addLinksPreview(): void {
         setTimeout(() => {
@@ -62,17 +45,15 @@
 
             if (!replyElement) return;
 
-            replyElement.innerHTML =
-                '> ' +
-                linkifyHtml(messageData.replyContent, {
-                    className: 'link',
-                    truncate: 40,
-                    validate: {
-                        url: (value) =>
-                            /^https?:\/\/[0-9a-zA-Z-.\/\?=]+/.test(value),
-                    },
-                    target: '_blank',
-                });
+            replyElement.innerHTML = linkifyHtml(messageData.replyContent, {
+                className: 'link',
+                truncate: 50,
+                validate: {
+                    url: (value) =>
+                        /^https?:\/\/[0-9a-zA-Z-.\/\?=]+/.test(value),
+                },
+                target: '_blank',
+            });
         }, 0);
     }
 
@@ -82,40 +63,39 @@
 
 <div
     in:fade={{ duration: !isPreview && animate ? 250 : 0 }}
-    class={`message-container ${isPreview ? 'preview' : ''}`}
+    class={`message-container ${isPreview ? 'preview' : ''} ${
+        profileData.profileId == $ourData?.profileId ? 'own' : ''
+    }`}
 >
+    {#if messageData.isReply}
+        <div class="reply-container">
+            {#if messageData.replyContent}
+                <h1 id="reply-message" class={`${messageData.messageId}-reply`}>
+                    <span>{messageData.replyContent}</span>
+                </h1>
+            {:else}
+                <h1 id="reply-name">
+                    Replying to <span>an unknown message</span>
+                </h1>
+            {/if}
+        </div>
+    {/if}
+
     <div class="message-info-container">
         <img
             id="avatar"
             draggable={false}
-            src={messageProfileData.avatar && !$dataSaver
-                ? messageProfileData.avatar
+            src={profileData.avatar && !$dataSaver
+                ? profileData.avatar
                 : '/svgs/profile/avatar.svg'}
-            alt={`${messageProfileData.username}'s avatar`}
-            on:contextmenu={() => showImageDropdown(messageProfileData.avatar)}
-        />
-
-        <h1
-            id="username"
+            alt={`${profileData.username}'s avatar`}
             on:click={() =>
                 !isPreview &&
-                loadTargetProfile(
-                    messageProfileData.profileId,
-                    $cachedAccountData
-                )}
-        >
-            {messageProfileData.username}
-        </h1>
+                loadTargetProfile(profileData.profileId, $cachedAccountData)}
+        />
 
-        <h1 id="creation-date">
-            •
-            <!-- Updates every 15 seconds -->
-            <Time
-                relative
-                format={'dddd HH:mm · MMMM D YYYY'}
-                live={15000}
-                timestamp={messageData.creationDate}
-            />
+        <h1 id="content" class={messageData.messageId}>
+            {messageData.content}
         </h1>
 
         {#if !hideOptions}
@@ -132,60 +112,48 @@
             </div>
         {/if}
     </div>
-
-    {#if messageData.isReply}
-        <div class="reply-container">
-            {#if messageData.replyContent}
-                <h1 id="reply-name">
-                    Replying to <span>{messageProfileData.username}</span>
-                </h1>
-                <h1 id="reply-message" class={`${messageData.messageId}-reply`}>
-                    > <span>{messageData.replyContent}</span>
-                </h1>
-            {:else}
-                <h1 id="reply-name">
-                    Replying to <span>an unknown message</span>
-                </h1>
-            {/if}
-        </div>
-    {/if}
-
-    <h1 id="content" class={messageData.messageId}>
-        {messageData.content}
-    </h1>
 </div>
 
 <style>
     .message-container {
         display: flex;
         flex-direction: column;
+        width: 90%;
+        margin-top: 10px;
+        margin-left: 5px;
+        margin-bottom: 5px;
+    }
+
+    .own {
+        align-items: end;
         width: 100%;
-        padding: 10px;
-        padding-bottom: 5px;
+        margin-left: 10%;
+        margin-right: 5px;
+        margin-left: 0;
     }
 
     .preview {
-        min-width: 550px;
-        width: 100%;
-        max-width: 700px;
-        padding-top: 0;
-    }
-
-    .message-container:hover {
-        background: var(--accent_bg_color);
+        width: 90%;
+        align-items: start;
     }
 
     .message-info-container {
         display: flex;
-        align-items: center;
-        margin-bottom: 5px;
+    }
+
+    .own .message-info-container {
+        flex-direction: row-reverse;
+    }
+
+    .preview .message-info-container {
+        flex-direction: row;
     }
 
     .message-info-container #avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 5px;
-        margin-right: 10px;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        margin-right: 5px;
         -webkit-touch-callout: none;
         -webkit-user-select: none;
         -khtml-user-select: none;
@@ -193,72 +161,48 @@
         -ms-user-select: none;
         user-select: none;
         justify-self: start;
-    }
-
-    .message-info-container #username {
-        color: var(--profile_info_color);
-        margin: 0;
-        font-size: 1.6rem;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-
-    .message-info-container #username:hover {
-        text-decoration: underline;
         cursor: pointer;
     }
 
-    .message-info-container #creation-date {
-        font-size: 1.1rem;
-        margin: 0;
+    .own #avatar {
         margin-left: 5px;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        flex: 1;
-        text-align: start;
     }
 
-    .message-info-container .menu-container {
-        opacity: 0;
-        transition: 100ms;
+    .preview #avatar {
+        cursor: default;
     }
 
     .menu-container {
+        display: flex;
+        align-items: center;
         cursor: default;
-        border: 3px solid var(--button_background);
         border-radius: 10px;
-        background: var(--button_background);
-        transform: translateY(-35px);
+        opacity: 0;
     }
 
-    .reply-container #reply-name {
-        font-size: 1.3rem;
-        margin: 0;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        text-align: start;
+    .own .menu-container {
+        flex-direction: row-reverse;
+        margin-right: 5px;
     }
 
-    .reply-container #reply-name span {
-        color: var(--profile_info_color);
+    .message-container:hover .menu-container {
+        opacity: 1;
+    }
+
+    .reply-container {
+        background: var(--side_svg_bg_color);
+        padding: 5px;
+        border-radius: 10px;
+        margin-bottom: 5px;
+        min-width: min-content;
+        max-width: max-content;
+        margin-left: 50px;
     }
 
     .reply-container #reply-message {
         color: var(--text_color);
         margin: 0;
-        font-size: 1.2rem;
+        font-size: 1rem;
         overflow: hidden;
         -webkit-touch-callout: none;
         -webkit-user-select: none;
@@ -267,6 +211,10 @@
         -ms-user-select: none;
         user-select: none;
         text-align: start;
+    }
+
+    .own .reply-container #reply-message {
+        text-align: end;
     }
 
     .reply-container #reply-message span {
@@ -280,14 +228,27 @@
     .message-container #content {
         color: var(--profile_info_color);
         margin: 0;
-        margin-left: 2px;
-        font-size: 1.4rem;
+        margin-left: 5px;
+        font-size: 1.1rem;
         white-space: pre-wrap;
         overflow: hidden;
         text-align: start;
+        background: var(--side_svg_bg_color);
+        padding: 10px;
+        border-radius: 10px;
     }
 
-    @media screen and (max-width: 700px) {
+    .own #content {
+        background: var(--branding_color);
+        color: white;
+        border-bottom-left-radius: 10px;
+    }
+
+    :global(.own .link) {
+        color: white;
+    }
+
+    @media screen and (max-width: 850px) {
         .chat-container {
             margin-top: 60px;
         }
@@ -299,32 +260,16 @@
         }
 
         .message-container #avatar {
-            width: 40px;
-            height: 40px;
-        }
-
-        .message-info-container #username {
-            font-size: 1.3rem;
-        }
-
-        .message-info-container #username:hover {
-            cursor: default;
-        }
-
-        .reply-container #reply-name {
-            font-size: 1.1rem;
+            width: 34px;
+            height: 34px;
         }
 
         .reply-container #reply-message {
-            font-size: 0.95rem;
+            font-size: 0.85rem;
         }
 
         .message-container #content {
-            font-size: 1.15rem;
-        }
-
-        .message-container #creation-date {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
     }
 </style>

@@ -11,17 +11,18 @@
     on:click={callback}
     ><path
         class="svg"
-        d="M39 38v-8.7q0-2.7-1.9-4.6-1.9-1.9-4.6-1.9H11.7l7.7 7.7-2.1 2.1L6 21.3 17.3 10l2.1 2.1-7.7 7.7h20.8q3.9 0 6.7 2.775Q42 25.35 42 29.3V38Z"
+        d="m43.8 29.6l-4.3-4.3 1.7-1.7q0.5-0.5 1.3-0.5 0.8 0 1.3 0.5l1.7 1.7q0.5 0.5 0.5 1.3 0 0.8-0.5 1.3zm-20 15.7v-4.3l13.1-13.1 4.3 4.3-13.1 13.1zm-21.7-16.4h18.1v3.6h-18.1zm0-9.9h28.4v3.6h-28.4zm0-10h28.4v3.6h-28.4z"
     /></svg
 >
 
 <style>
     svg {
-        width: 36px;
-        height: 36px;
+        width: 50px;
+        height: 50px;
+        padding: 10px;
+        margin-right: 5px;
         margin-left: 5px;
-        border-radius: 20px;
-        padding: 5px;
+        border-radius: 10px;
     }
 
     svg:hover {
@@ -30,8 +31,9 @@
 
     @media screen and (max-width: 850px) {
         svg {
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
+            padding: 5px;
         }
     }
 </style>

@@ -3,13 +3,13 @@
     import { onMount } from 'svelte';
     import Checkbox from 'svelte-checkbox';
     import { writable, type Writable } from 'svelte/store';
-    import { fade } from 'svelte/transition';
     import ModalTemplate from '../ModalTemplate.svelte';
     import { ourData, searchData } from 'stores/profile';
     import { loadOurProfile, loadTargetProfile } from 'utilities/profile';
     import { cachedAccountData, socket } from 'stores/main';
     import { currentPanelId, PanelTypes } from 'stores/panels';
     import type { ModalData } from 'stores/modals';
+    import ErrorHeader from '$lib/app/reusables/all/ErrorHeader.svelte';
 
     let profileId = $ourData.profileId;
     let username = $ourData.username;
@@ -80,17 +80,10 @@
 
     function previewListener(
         item: HTMLImageElement,
-        name: string,
         store: Writable<string>,
         defaultSrc?: string
     ): void {
-        const info = document.getElementsByClassName(
-            `${name.toLowerCase()}-info`
-        )[0];
-
         item.onerror = () => {
-            info.textContent = `${name} - Invalid URL`;
-
             canUpload = false;
             item.src = `/svgs/profile/${
                 defaultSrc ? defaultSrc : 'avatar'
@@ -103,20 +96,14 @@
             // Allow empty avatar url, reset it
             if (newStore == '') {
                 // Reset state
-                info.textContent = name;
-
                 canUpload = true;
             }
 
             // Check for avatar https, perform some client side validation on our own
             else if (!newStore.match(/^(https:\/\/).+$/)) {
-                info.textContent = `${name} - Invalid URL`;
-
                 canUpload = false;
             } else if (!canUpload) {
                 // Reset state
-                info.textContent = name;
-
                 canUpload = true;
             }
         });
@@ -125,13 +112,11 @@
     onMount(() => {
         previewListener(
             document.getElementById('avatar-preview') as HTMLImageElement,
-            'Avatar',
             avatar
         );
 
         previewListener(
             document.getElementById('banner-preview') as HTMLImageElement,
-            'Banner',
             banner,
             'banner'
         );
@@ -150,15 +135,13 @@
                 callback: dismissModal,
             },
         ],
+
+        useSecondaryHr: true,
     };
 </script>
 
 <ModalTemplate {data}>
-    {#if errorMessage}
-        <h1 class="modal-error-header modal-header" in:fade={{ duration: 500 }}>
-            {errorMessage}
-        </h1>
-    {/if}
+    <ErrorHeader {errorMessage} />
 
     <h1 class="modal-header">Profile ID</h1>
     <input class="modal-input" bind:value={profileId} maxlength={30} />
@@ -176,13 +159,11 @@
             alt="New avatar"
             draggable={false}
         />
-        <h1 class="modal-header avatar-info">Avatar</h1>
     </div>
 
     <input class="modal-input" maxlength={512} bind:value={$avatar} />
 
     <div>
-        <h1 class="modal-header banner-info">Banner</h1>
         <img
             id="banner-preview"
             src={$banner ? $banner : '/svgs/profile/banner.svg'}
@@ -213,31 +194,31 @@
     }
 
     #avatar-preview {
-        width: 60px;
-        height: 60px;
+        width: 128px;
+        height: 128px;
         border-radius: 10px;
         margin-right: 10px;
     }
 
     #banner-preview {
-        width: 510px;
-        height: 240px;
+        width: 400px;
+        height: 230px;
         border-radius: 5px;
     }
 
     textarea {
-        min-height: 100px;
+        min-height: 150px;
     }
 
-    @media screen and (max-width: 700px) {
+    @media screen and (max-width: 850px) {
         #avatar-preview {
-            width: 48px;
-            height: 48px;
+            width: 64px;
+            height: 64px;
         }
 
         #banner-preview {
-            width: 300px;
-            height: 169px;
+            width: 250px;
+            height: 150px;
         }
     }
 </style>

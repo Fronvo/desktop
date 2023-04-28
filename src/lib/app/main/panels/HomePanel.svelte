@@ -1,6 +1,5 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import { fade } from 'svelte/transition';
     import { setTitle } from 'utilities/main';
     import HomePosts from './home/HomePosts.svelte';
 
@@ -12,7 +11,7 @@
 </script>
 
 <div class="home-container">
-    <h1 in:fade={{ duration: 250 }} id="latest-posts">Latest posts</h1>
+    <h1 id="latest-posts">Latest posts</h1>
 
     <HomePosts />
 </div>
@@ -23,9 +22,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-left: 100px;
-        margin-right: 100px;
-        margin-bottom: 40px;
+        width: 95%;
     }
 
     .home-container #latest-posts {
@@ -38,14 +35,14 @@
         -ms-user-select: none;
         user-select: none;
         font-size: 2.5rem;
-        border-bottom: 5px solid var(--text_color);
+        border-bottom: 5px solid var(--branding_color);
         padding: 10px;
     }
 
-    @media screen and (max-width: 700px) {
+    @media screen and (max-width: 850px) {
         .home-container {
-            margin-left: 0;
-            margin-right: 0;
+            width: 100%;
+            margin-bottom: 70px;
         }
 
         .home-container #latest-posts {

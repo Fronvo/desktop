@@ -74,8 +74,6 @@
                 callback: dismissModal,
             },
         ],
-
-        removeTransparency: true,
     };
 </script>
 
@@ -139,7 +137,7 @@
         user-select: none;
     }
 
-    @media screen and (max-width: 700px) {
+    @media screen and (max-width: 850px) {
         #content {
             font-size: 1.3rem;
         }

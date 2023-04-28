@@ -1,9 +1,9 @@
 <script lang="ts">
     import { accountPanelAnimDuration } from 'stores/account';
-    import { fly, slide } from 'svelte/transition';
+    import { scale } from 'svelte/transition';
 </script>
 
-<div in:slide={{ duration: accountPanelAnimDuration }} out:fly={{ y: 50 }}>
+<div transition:scale={{ duration: accountPanelAnimDuration, start: 0.5 }}>
     <slot />
 </div>
 
@@ -18,7 +18,7 @@
         width: 550px;
     }
 
-    @media screen and (max-width: 700px) {
+    @media screen and (max-width: 850px) {
         div {
             min-width: 350px;
             width: 50vw;

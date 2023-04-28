@@ -83,16 +83,13 @@
     });
 </script>
 
-{#if ($ourData || $guestMode) && $searchData}
-    {#if !$dataSaver && $searchData.banner}
-        <div
-            class="ambient-bg"
-            in:fade={{ duration: 200, easing: sineInOut }}
-        />
-    {/if}
+{#if !$dataSaver && $searchData?.banner}
+    <div class="ambient-bg" in:fade={{ duration: 200, easing: sineInOut }} />
+{/if}
 
-    <div class="info-container" in:fade={{ duration: 500 }}>
-        <ProfileTop banner={$searchData.banner} avatar={$searchData.avatar} />
+<div class="info-container" in:fade={{ duration: 500 }}>
+    {#if ($ourData || $guestMode) && $searchData && $searchPosts}
+        <ProfileTop avatar={$searchData.avatar} />
 
         <ProfileIdentifier data={$searchData} ourData={$ourData} />
 
@@ -105,8 +102,10 @@
             followers={$searchData.followers}
             following={$searchData.following}
         />
-    </div>
+    {/if}
+</div>
 
+{#if $searchData}
     <ProfilePosts data={$searchData} posts={$searchPosts} />
 {/if}
 
@@ -124,12 +123,14 @@
     .info-container {
         display: flex;
         flex-direction: column;
-        width: 650px;
-        justify-content: center;
+        width: 35vw;
+        min-width: 600px;
+        justify-content: start;
     }
 
-    @media screen and (max-width: 700px) {
+    @media screen and (max-width: 850px) {
         .info-container {
+            min-width: 100%;
             width: 100%;
         }
     }

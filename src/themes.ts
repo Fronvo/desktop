@@ -1,6 +1,9 @@
 import { writable, type Writable } from 'svelte/store';
 
 interface ThemingOptions {
+    // Fronvo branding color
+    branding_color: string;
+
     // Fronvo background color
     bg_color: string;
 
@@ -39,27 +42,33 @@ interface ThemingOptions {
 
     // Target sizes
     modal_header_size: string;
-    modal_header_size_700: string;
+    modal_header_size_850: string;
     modal_input_size: string;
-    modal_input_size_700: string;
+    modal_input_size_850: string;
     modal_button_size: string;
-    modal_button_size_700: string;
+    modal_button_size_850: string;
 
     // Buttons
     button_background: string;
 
     // Seperators
     seperator_background: string;
+
+    // MainSideNav
+    side_bg_color: string;
+    side_svg_bg_color: string;
 }
 
 export const defaultTheme: ThemingOptions = {
+    branding_color: 'rgb(150, 120, 255)',
+
     bg_color: 'rgb(30, 30, 30)',
 
-    text_color: 'rgb(175, 120, 255)',
+    text_color: 'rgb(225, 225, 225)',
 
     accent_bg_color: 'rgba(22, 22, 22, 50%)',
 
-    accent_shadow_color: 'rgb(10, 10, 10)',
+    accent_shadow_color: 'rgb(15, 15, 15)',
 
     svg_stroke: 'rgb(130, 64, 255)',
 
@@ -77,24 +86,29 @@ export const defaultTheme: ThemingOptions = {
 
     profile_info_color: 'white',
 
-    modal_header_size: '1.65rem',
-    modal_header_size_700: '1.2rem',
-    modal_input_size: '1.6rem',
-    modal_input_size_700: '1.2rem',
+    modal_header_size: '1.5rem',
+    modal_header_size_850: '1.1rem',
+    modal_input_size: '1.4rem',
+    modal_input_size_850: '1.1rem',
     modal_button_size: '1.4rem',
-    modal_button_size_700: '1rem',
+    modal_button_size_850: '1rem',
 
     button_background: 'rgb(35, 35, 35)',
 
-    seperator_background: 'rgb(40, 40, 40)',
+    seperator_background: 'rgb(40, 40, 40, 75%)',
+
+    side_bg_color: 'rgb(25, 25, 25)',
+    side_svg_bg_color: 'rgb(35, 35, 35)',
 };
 
 export const whiteTheme: ThemingOptions = {
+    branding_color: 'rgb(190, 180, 255)',
+
     bg_color: 'rgb(250, 250, 250)',
 
-    text_color: 'rgb(130, 70, 255)',
+    text_color: 'rgb(60, 60, 60)',
 
-    accent_bg_color: 'rgb(255, 255, 255, 50%)',
+    accent_bg_color: 'rgb(230, 230, 230, 50%)',
 
     accent_shadow_color: 'rgb(230, 230, 230)',
 
@@ -114,16 +128,19 @@ export const whiteTheme: ThemingOptions = {
 
     profile_info_color: 'rgb(40, 40, 40)',
 
-    modal_header_size: '1.65rem',
-    modal_header_size_700: '1.2rem',
-    modal_input_size: '1.6rem',
-    modal_input_size_700: '1.2rem',
+    modal_header_size: '1.5rem',
+    modal_header_size_850: '1.1rem',
+    modal_input_size: '1.4rem',
+    modal_input_size_850: '1.1rem',
     modal_button_size: '1.4rem',
-    modal_button_size_700: '1rem',
+    modal_button_size_850: '1rem',
 
     button_background: 'rgb(240, 240, 240)',
 
-    seperator_background: 'rgb(240, 240, 240)',
+    seperator_background: 'rgb(240, 240, 240, 75%)',
+
+    side_bg_color: 'rgb(248, 248, 248)',
+    side_svg_bg_color: 'rgb(240, 240, 240)',
 };
 
 export const currentTheme: Writable<ThemingOptions> = writable(defaultTheme);

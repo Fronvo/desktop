@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { fade } from 'svelte/transition';
     import { dismissModal, setProgressBar, switchPanel } from 'utilities/main';
     import { loadCommunitiesData } from 'utilities/communities';
     import ModalTemplate from '../ModalTemplate.svelte';
@@ -7,6 +6,7 @@
     import type { ModalData } from 'stores/modals';
     import { loadOurProfile } from 'utilities/profile';
     import { PanelTypes } from 'stores/panels';
+    import ErrorHeader from '$lib/app/reusables/all/ErrorHeader.svelte';
 
     let inviteCode: string;
     let isJoining = false;
@@ -59,21 +59,16 @@
             },
         ],
 
-        removeTransparency: true,
+        useSecondaryHr: true,
     };
 </script>
 
 <ModalTemplate {data}>
-    {#if errorMessage}
-        <h1 class="modal-error-header modal-header" in:fade={{ duration: 500 }}>
-            {errorMessage}
-        </h1>
-    {/if}
-
-    <h1 class="modal-header">Invite code</h1>
+    <ErrorHeader {errorMessage} />
 
     <!-- svelte-ignore a11y-autofocus -->
     <input
+        placeholder="Invite code"
         class="modal-input"
         autofocus
         bind:value={inviteCode}
